@@ -14,6 +14,6 @@ class Crew extends Model
 
     public function movies(): BelongsToMany
     {
-        return $this->belongsToMany(Movie::class)->withPivot('job', 'department');
+        return $this->belongsToMany(Movie::class, 'crew_movie')->withPivot('job', 'department');
     }
 }

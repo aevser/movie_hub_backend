@@ -14,6 +14,6 @@ class Actor extends Model
 
     public function movies(): BelongsToMany
     {
-        return $this->belongsToMany(Movie::class)->withPivot('character');
+        return $this->belongsToMany(Movie::class, 'actor_movie')->withPivot('character');
     }
 }

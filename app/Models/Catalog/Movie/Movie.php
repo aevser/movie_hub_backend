@@ -7,6 +7,8 @@ use App\Models\Catalog\Crew\Crew;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Backdrop\MovieBackdropImage;
 use App\Models\Catalog\Movie\Image\MovieImage;
+use App\Models\User\MovieReview;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,17 +21,17 @@ class Movie extends Model
 
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class, 'genre_movie');
     }
 
     public function actors(): BelongsToMany
     {
-        return $this->belongsToMany(Actor::class)->withPivot('character');
+        return $this->belongsToMany(Actor::class, 'actor_movie')->withPivot('character');
     }
 
     public function crews(): BelongsToMany
     {
-        return $this->belongsToMany(Crew::class)->withPivot('job', 'department');
+        return $this->belongsToMany(Crew::class, 'crew_movie')->withPivot('job', 'department');
     }
 
     public function images(): HasMany
@@ -40,5 +42,15 @@ class Movie extends Model
     public function backdrops(): HasMany
     {
         return $this->hasMany(MovieBackdropImage::class);
+    }
+
+    public function favoritedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_favorite');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(MovieReview::class);
     }
 }
