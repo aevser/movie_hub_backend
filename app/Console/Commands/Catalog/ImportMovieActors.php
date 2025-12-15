@@ -30,7 +30,7 @@ class ImportMovieActors extends Command
 
             $result = $importMovieActorService->import();
 
-            $this->info('Импорт актеров завершен. Импортировано: ' . $result . ' жанров.');
+            $this->info('Импорт актеров завершен. Импортировано: ' . $result . ' актеров.');
 
             return self::SUCCESS;
 

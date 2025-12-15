@@ -6,6 +6,16 @@ use Illuminate\Support\Facades\Http;
 
 class MovieClientService
 {
+    public function images(int $movieId): array
+    {
+        $response = $this->get('/3/movie/' . $movieId . '/images', []);
+
+        return [
+            'backdrops' => $response['backdrops'] ?? [],
+            'posters' => $response['posters'] ?? []
+        ];
+    }
+
     public function credits(int $movieId): array
     {
         $response = $this->get('/3/movie/' . $movieId . '/credits', []);

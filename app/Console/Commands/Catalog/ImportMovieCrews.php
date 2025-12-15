@@ -30,7 +30,7 @@ class ImportMovieCrews extends Command
 
             $result = $importMovieCrewService->import();
 
-            $this->info('Импорт команды завершен. Импортировано: ' . $result . ' жанров.');
+            $this->info('Импорт команды завершен. Импортировано: ' . $result . ' членов команды.');
 
             return self::SUCCESS;
 

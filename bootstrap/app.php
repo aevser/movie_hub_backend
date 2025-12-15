@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('app:import-movie-actors')->withoutOverlapping()->daily();
 
         $schedule->command('app:import-movie-crews')->withoutOverlapping()->daily();
+
+        $schedule->command('app:import-movie-images')->withoutOverlapping()->daily();
+
+        $schedule->command('app:import-movie-backdrops')->withoutOverlapping()->daily();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         //
