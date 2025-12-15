@@ -24,12 +24,12 @@ class Movie extends Model
 
     public function actors(): BelongsToMany
     {
-        return $this->belongsToMany(Actor::class);
+        return $this->belongsToMany(Actor::class)->withPivot('character');
     }
 
     public function crews(): BelongsToMany
     {
-        return $this->belongsToMany(Crew::class);
+        return $this->belongsToMany(Crew::class)->withPivot('job', 'department');
     }
 
     public function images(): HasMany
