@@ -29,7 +29,7 @@ class ImportGenreService
     {
         $this->genreRepository->upsert([
             'movie_db_id' => $genre['id'],
-            'name' => $genre['name'],
+            'name' => mb_ucfirst($genre['name']),
             'created_at' => now(),
             'updated_at' => now()
         ]);

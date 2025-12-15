@@ -19,7 +19,7 @@ class ImportMovieCrews extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Импорт команды';
 
     /**
      * Execute the console command.

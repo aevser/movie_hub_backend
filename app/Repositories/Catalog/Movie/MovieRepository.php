@@ -4,14 +4,38 @@ namespace App\Repositories\Catalog\Movie;
 
 use App\Models\Catalog\Movie\Movie;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository
 {
+    private const array RELATIONS = [
+        'actors',
+        'genres',
+        'crews',
+        'images',
+        'backdrops'
+    ];
+
+    private const string RELATION = 'genres';
+
     public function __construct(private Movie $movie){}
+
+    public function getAllPagination(array $filters): LengthAwarePaginator
+    {
+        return $this->movie->query()
+            ->with(self::RELATION)
+            ->orderBy('id', 'desc')
+            ->paginate($filters['perPage'] ?? 25);
+    }
 
     public function getAllCollection(): Collection
     {
         return $this->movie->query()->get();
+    }
+
+    public function findById(int $id): Movie
+    {
+        return $this->movie->query()->with(self::RELATIONS)->findOrFail($id);
     }
 
     public function findIdsByMovieDbIds(array $movieDbIds): array

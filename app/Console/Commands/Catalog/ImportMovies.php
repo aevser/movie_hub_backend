@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ImportMovies extends Command
 {
-    private const int LIMIT = 40;
+    private const int LIMIT = 5;
 
     /**
      * The name and signature of the console command.

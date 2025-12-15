@@ -3,10 +3,18 @@
 namespace App\Repositories\Catalog\Crew;
 
 use App\Models\Catalog\Crew\Crew;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieCrewRepository
 {
     public function __construct(private Crew $crew){}
+
+    public function getAllPagination(array $filters): LengthAwarePaginator
+    {
+        return $this->crew->query()
+            ->orderBy('id', 'desc')
+            ->paginate($filters['perPage'] ?? 25);
+    }
 
     public function findIdByMovieDbId(int $movieDbId): int
     {

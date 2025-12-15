@@ -4,10 +4,21 @@ namespace App\Repositories\Catalog\Genre;
 
 use App\Models\Catalog\Genre\Genre;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class GenreRepository
 {
+    private const string RELATIONS = 'movies:id,title,description,poster_url,release_date';
+
     public function __construct(private Genre $genre){}
+
+    public function getAllPagination(array $filters): LengthAwarePaginator
+    {
+        return $this->genre->query()
+            ->with(self::RELATIONS)
+            ->orderBy('id', 'desc')
+            ->paginate($filters['perPage'] ?? 25);
+    }
 
     public function getAllCollection(): Collection
     {
