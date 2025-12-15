@@ -11,6 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->command('app:import-genres')->withoutOverlapping()->daily();
+
+        $schedule->command('app:import-movies')->withoutOverlapping()->daily();
+
+        $schedule->command('app:import-movie-actors')->withoutOverlapping()->daily();
+
+        $schedule->command('app:import-movie-crews')->withoutOverlapping()->daily();
+    })
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })

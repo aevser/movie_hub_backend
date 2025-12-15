@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Repositories\Catalog\Crew;
+
+use App\Models\Catalog\Crew\Crew;
+
+class MovieCrewRepository
+{
+    public function __construct(private Crew $crew){}
+
+    public function findIdByMovieDbId(int $movieDbId): int
+    {
+        return $this->crew->query()
+            ->where('movie_db_id', $movieDbId)
+            ->value('id');
+    }
+
+    public function upsert(array $data): void
+    {
+        $this->crew->query()->upsert(
+            $data,
+            ['movie_db_id'],
+            ['name', 'image_url', 'updated_at']
+        );
+    }
+}
