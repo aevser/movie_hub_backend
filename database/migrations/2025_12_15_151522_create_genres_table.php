@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('movie_db_id')->unique();
             $table->string('name')->unique();
+            $table->string('slug');
             $table->timestamps();
         });
     }

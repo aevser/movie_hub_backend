@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Genre extends Model
 {
-    protected $fillable = ['movie_db_id', 'name'];
+    protected $fillable = ['movie_db_id', 'name', 'slug'];
+
+    // Вспомогательные методы
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     // Связи
     public function movies(): BelongsToMany

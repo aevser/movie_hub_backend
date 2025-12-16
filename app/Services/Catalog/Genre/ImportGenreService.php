@@ -4,6 +4,7 @@ namespace App\Services\Catalog\Genre;
 
 use App\Repositories\Catalog\Genre\GenreRepository;
 use App\Services\Catalog\MovieClientService;
+use Illuminate\Support\Str;
 
 class ImportGenreService
 {
@@ -30,6 +31,7 @@ class ImportGenreService
         $this->genreRepository->upsert([
             'movie_db_id' => $genre['id'],
             'name' => mb_ucfirst($genre['name']),
+            'slug' => Str::slug($genre['name'], '-', 'ru'),
             'created_at' => now(),
             'updated_at' => now()
         ]);

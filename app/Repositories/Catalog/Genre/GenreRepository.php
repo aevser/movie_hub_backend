@@ -17,7 +17,7 @@ class GenreRepository
         return $this->genre->query()
             ->with(self::RELATIONS)
             ->orderBy('id', 'desc')
-            ->paginate($filters['perPage'] ?? 25);
+            ->paginate($filters['perPage'] ?? 15);
     }
 
     public function getAllCollection(): Collection

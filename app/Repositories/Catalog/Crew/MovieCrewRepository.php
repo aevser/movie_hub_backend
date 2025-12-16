@@ -16,6 +16,16 @@ class MovieCrewRepository
             ->paginate($filters['perPage'] ?? 25);
     }
 
+    public function getDirectorByMovieId(int $movieId): ?Crew
+    {
+        return $this->crew->query()
+            ->whereHas('movies', function ($q) use ($movieId) {
+                $q->where('movies.id', $movieId)
+                    ->where('crew_movie.job', 'Director');
+            })
+            ->first();
+    }
+
     public function findIdByMovieDbId(int $movieDbId): int
     {
         return $this->crew->query()

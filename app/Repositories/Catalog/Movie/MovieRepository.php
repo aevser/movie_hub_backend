@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Catalog\Movie;
 
+use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -31,6 +32,21 @@ class MovieRepository
     public function getAllCollection(): Collection
     {
         return $this->movie->query()->get();
+    }
+
+    public function getAllByGenre(Genre $genre): LengthAwarePaginator
+    {
+        return $genre->movies()
+            ->with(self::RELATION)
+            ->orderBy('id', 'desc')
+            ->paginate($genre['perPage'] ?? 5);
+    }
+
+    public function getOneByGenre(Genre $genre, int $id): Movie
+    {
+        return $genre->movies()
+            ->with(self::RELATIONS)
+            ->findOrFail($id);
     }
 
     public function findById(int $id): Movie

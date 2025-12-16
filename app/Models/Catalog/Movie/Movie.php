@@ -15,7 +15,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
 {
-    protected $fillable = ['movie_db_id', 'title', 'description', 'poster_url', 'release_date'];
+    protected $fillable = ['movie_db_id', 'title', 'slug', 'description', 'poster_url', 'release_date'];
+
+    // Вспомогательные методы
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    public function getDirectorAttribute(): string
+    {
+        return $this->crews->firstWhere('pivot.job', 'Director');
+    }
 
     // Связи
 

@@ -5,6 +5,7 @@ namespace App\Services\Catalog\Movie;
 use App\Repositories\Catalog\Genre\GenreRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
+use Illuminate\Support\Str;
 
 class ImportMovieService
 {
@@ -57,6 +58,7 @@ class ImportMovieService
         $this->movieRepository->upsert([
             'movie_db_id' => $movie['id'],
             'title' => $movie['title'],
+            'slug' => Str::slug($movie['title'], '-', 'ru'),
             'description' => $movie['overview'],
             'poster_url' => $movie['poster_path']
                 ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']

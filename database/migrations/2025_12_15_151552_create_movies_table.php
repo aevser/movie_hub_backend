@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('movie_db_id')->unique();
             $table->string('title');
+            $table->string('slug');
             $table->text('description');
             $table->string('poster_url')->nullable();
             $table->date('release_date')->nullable();
