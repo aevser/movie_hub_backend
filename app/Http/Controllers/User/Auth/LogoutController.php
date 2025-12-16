@@ -14,6 +14,6 @@ class LogoutController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->intended(route('genres.index'));
+        return redirect()->route('genres.index');
     }
 }

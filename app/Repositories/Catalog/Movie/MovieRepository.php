@@ -14,7 +14,8 @@ class MovieRepository
         'genres',
         'crews',
         'images',
-        'backdrops'
+        'backdrops',
+        'reviews'
     ];
 
     private const string RELATION = 'genres';

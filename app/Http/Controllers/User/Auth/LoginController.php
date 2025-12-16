@@ -22,6 +22,6 @@ class LoginController extends Controller
                 ->withInput();
         }
 
-        return redirect()->intended(route('genres.index'));
+        return redirect()->route('genres.index');
     }
 }
