@@ -22,7 +22,6 @@
                             </button>
                         </form>
                     @else
-                        {{-- Добавить в избранное (серое сердце) --}}
                         <form method="POST" action="{{ route('favorites.store', ['movie' => $movie]) }}" style="margin: 0;">
                             @csrf
                             <button type="submit" class="favorite-btn" title="Добавить в избранное">
@@ -52,10 +51,8 @@
             </nav>
         </div>
 
-        {{-- MOVIE --}}
         <div class="movie-show">
 
-            {{-- LEFT --}}
             <div class="movie-show-left">
                 <div class="movie-show-poster">
                     <img

@@ -71,11 +71,8 @@ cp .env.example .env
 Настройте подключение к базе данных и укажите API-ключ TMDB:
 
 ```env
-DB_DATABASE=movie_hub
-DB_USERNAME=root
-DB_PASSWORD=
-
-TMDB_API_KEY=your_api_key_here
+MOVIE_DB_URL=https://api.themoviedb.org
+MOVIE_DB_API_KEY=eafa6b6a453ad37c0002d976dff5dc97
 ```
 
 ---
@@ -99,7 +96,12 @@ php artisan migrate
 ### Загрузка данных о фильмах
 
 ```bash
-php artisan movies:import
+php artisan app:import-movie-genres
+php artisan app:import-movies
+php artisan app:import-movie-actors
+php artisan app:import-movie-crews
+php artisan app:import-movie-images
+php artisan app:import-movie-backdrop-images
 ```
 
 ### API
@@ -138,5 +140,5 @@ php artisan serve
 Приложение будет доступно по адресу:
 
 ```
-http://127.0.0.1:8000
+http://127.0.0.1:8000/catalog
 ```

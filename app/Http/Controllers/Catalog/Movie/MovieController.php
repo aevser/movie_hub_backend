@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Catalog\Movie;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\Movie\FilterMovieRequest;
+use App\Http\Requests\Catalog\Movie\SortMovieRequest;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Crew\MovieCrewRepository;
@@ -25,7 +26,7 @@ class MovieController extends Controller
         private MovieReviewRepository $movieReviewRepository
     ){}
 
-    public function index(Genre $genre): View
+    public function index(Genre $genre, SortMovieRequest $request): View
     {
         return view('catalog.movie.index',
             [
@@ -33,7 +34,8 @@ class MovieController extends Controller
                 'movies' => $this->movieRepository->paginateByGenre
                 (
                     genre: $genre,
-                    filters: []
+                    filters: [],
+                    sort: $request->validated('sort')
                 )
             ]
         );
@@ -86,7 +88,8 @@ class MovieController extends Controller
                 'genres' => $this->movieGenreRepository->collection(),
                 'movies' => $this->movieRepository->paginate
                 (
-                    filters: $filters
+                    filters: $filters,
+                    sort: null
                 ),
                 'actors' => $this->movieCrewRepository->collection(),
                 'directors' => $this->movieCrewRepository->collection()

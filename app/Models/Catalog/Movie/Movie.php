@@ -10,13 +10,14 @@ use App\Models\Catalog\Movie\Image\MovieImage;
 use App\Models\User\MovieReview;
 use App\Models\User\User;
 use App\Traits\Movie\Filter\Filter;
+use App\Traits\Movie\Sort\Sort;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
 {
-    use Filter;
+    use Filter, Sort;
 
     protected $fillable = ['movie_db_id', 'title', 'slug', 'description', 'poster_url', 'release_date'];
 

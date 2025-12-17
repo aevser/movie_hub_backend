@@ -49,7 +49,7 @@ class MovieReviewRepository
 
     public function delete(int $userId, int $reviewId): bool
     {
-        return (bool) $this->movieReview->query()
+        return $this->movieReview->query()
             ->where('user_id', $userId)
             ->findOrFail($reviewId)
             ->delete();

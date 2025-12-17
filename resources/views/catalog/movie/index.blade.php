@@ -23,6 +23,42 @@
             </nav>
         </div>
 
+        <div class="d-flex justify-content-end mb-3">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                        id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-sort-down"></i> Сортировка
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                    <li>
+                        <a class="dropdown-item {{ request('sort') === 'release_date_desc' || !request('sort') ? 'active' : '' }}"
+                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'release_date_desc'])) }}">
+                            Дата выпуска (новые)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {{ request('sort') === 'release_date_asc' ? 'active' : '' }}"
+                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'release_date_asc'])) }}">
+                            Дата выпуска (старые)
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item {{ request('sort') === 'rating_desc' ? 'active' : '' }}"
+                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'rating_desc'])) }}">
+                            Рейтинг (высокий)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {{ request('sort') === 'rating_asc' ? 'active' : '' }}"
+                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'rating_asc'])) }}">
+                            Рейтинг (низкий)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="movie-list d-flex flex-column gap-3">
             @forelse($movies as $movie)
                 <div class="movie-row d-flex">
