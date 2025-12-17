@@ -2,6 +2,7 @@
 
 namespace App\Services\Catalog\Crew;
 
+use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Crew\MovieCrewRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
@@ -14,52 +15,43 @@ class ImportMovieCrewService
         private MovieCrewRepository $movieCrewRepository
     ){}
 
-    public function import(): int
+    public function import(Movie $movie): int
     {
-        $movies = $this->movieRepository->getAllCollection();
-        $saved = 0;
+        $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
 
-        foreach ($movies as $movie) {
-            $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
-            $crews = $credits['crew'];
+        $crews = $credits['crew'];
 
-            if (empty($crews)) {
-                continue;
-            }
+        $attach = [];
 
-            foreach ($crews as $crew) {
-                $crewId = $this->saveCrew(crew: $crew);
-                $this->attachCrew(movieId: $movie->id, crewId: $crewId, job: $crew['job'], department: $crew['department']);
-                $saved++;
-            }
+        if (empty($crews))
+        {
+            return 0;
         }
 
-        return $saved;
-    }
+        foreach ($crews as $crew)
+        {
+            $crew = $this->movieCrewRepository->updateOrCreate
+            (
+                movieDbId: $crew['id'],
+                data:
+                [
+                    'name' => $crew['name'],
+                    'image_url' =>
+                        $crew['profile_path']
+                            ? 'https://image.tmdb.org/t/p/w500' . $crew['profile_path']
+                            : null
+                ]
+            );
 
-    private function saveCrew(array $crew): int
-    {
-        $this->movieCrewRepository->upsert([
-            'movie_db_id' => $crew['id'],
-            'name' => $crew['name'],
-            'image_url' => $crew['profile_path']
-                ? 'https://image.tmdb.org/t/p/w500' . $crew['profile_path']
-                : null,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+            $attach[$crew->id] =
+                [
+                    'job' => $crew['job'],
+                    'department' => $crew['department']
+                ];
+        }
 
-        return $this->movieCrewRepository
-            ->findIdByMovieDbId(movieDbId: $crew['id']);
-    }
+        $this->movieRepository->attachCrewsBatch(movie: $movie, attach: $attach);
 
-    private function attachCrew(int $movieId, int $crewId, string $job, string $department): void
-    {
-        $this->movieRepository->attachCrews(movieId: $movieId, crewIds: [
-            $crewId => [
-                'job' => $job,
-                'department' => $department
-            ]
-        ]);
+        return count($attach);
     }
 }

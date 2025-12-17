@@ -16,24 +16,30 @@ class ImportGenreService
     public function import(): int
     {
         $genres = $this->movieClientService->genres();
+
         $saved = 0;
 
-        foreach ($genres as $genre) {
-            $this->saveGenre(genre: $genre);
+        if (empty($genres))
+        {
+            return 0;
+        }
+
+        foreach ($genres as $genre)
+        {
+
+            $this->genreRepository->updateOrCreate
+            (
+                movieDbId: $genre['id'],
+                data:
+                [
+                    'name' => mb_ucfirst($genre['name']),
+                    'slug' => Str::slug($genre['name'], '-', 'ru')
+                ]
+            );
+
             $saved++;
         }
 
         return $saved;
-    }
-
-    private function saveGenre(array $genre): void
-    {
-        $this->genreRepository->upsert([
-            'movie_db_id' => $genre['id'],
-            'name' => mb_ucfirst($genre['name']),
-            'slug' => Str::slug($genre['name'], '-', 'ru'),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
     }
 }

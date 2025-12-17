@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands\Catalog;
 
+use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\Crew\ImportMovieCrewService;
 use Illuminate\Console\Command;
 
 class ImportMovieCrews extends Command
 {
+    private const int CHUNK_SIZE = 200;
+
     /**
      * The name and signature of the console command.
      *
@@ -24,13 +27,24 @@ class ImportMovieCrews extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ImportMovieCrewService $importMovieCrewService): int
+    public function handle(MovieRepository $movieRepository, ImportMovieCrewService $importMovieCrewService): int
     {
         try {
+            $startTime = microtime(true);
 
-            $result = $importMovieCrewService->import();
+            $imported = 0;
 
-            $this->info('Импорт команды завершен. Импортировано: ' . $result . ' членов команды.');
+            $movieRepository->chunkById(self::CHUNK_SIZE, function($movies) use ($importMovieCrewService, &$imported)
+            {
+                foreach ($movies as $movie)
+                {
+                    $imported += $importMovieCrewService->import(movie: $movie);
+                }
+            });
+
+            $endTime = microtime(true);
+
+            $this->info('Импорт завершён. Загружено членов команды: ' . $imported .' Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 

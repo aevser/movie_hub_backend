@@ -2,51 +2,49 @@
 
 namespace App\Services\Catalog\Movie\Image;
 
+use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Movie\Image\MovieImageRepository;
-use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
 
 class ImportMovieImageService
 {
     public function __construct(
         private MovieClientService $movieClientService,
-        private MovieRepository $movieRepository,
         private MovieImageRepository $movieImageRepository
     ){}
 
-    public function import(): int
+    public function import(Movie $movie): int
     {
-        $movies = $this->movieRepository->getAllCollection();
+        $images = $this->movieClientService->images(movieId: $movie->movie_db_id);
+
+        $posters = $images['posters'];
+
         $saved = 0;
 
-        foreach ($movies as $movie) {
-            $images = $this->movieClientService->images(movieId: $movie->movie_db_id);
-            $posters = $images['posters'];
+        if (empty($posters))
+        {
+            return 0;
+        }
 
-            if (empty($posters)) {
-                continue;
-            }
+        foreach ($posters as $poster)
+        {
+            $this->movieImageRepository->updateOrCreate
+            (
+                movieId: $movie->id,
+                data:
+                [
+                    'image_url' =>
+                        $poster['file_path']
+                            ? 'https://image.tmdb.org/t/p/w500' . $poster['file_path']
+                            : null,
+                    'image_width' => $poster['width'],
+                    'image_height' => $poster['height']
+                ]
+            );
 
-            foreach ($posters as $poster) {
-                $this->saveImage(movieId: $movie->id, image: $poster);
-                $saved++;
-            }
+            $saved++;
         }
 
         return $saved;
-    }
-
-    private function saveImage(int $movieId, array $image): void
-    {
-        $this->movieImageRepository->firstOrCreate([
-            'movie_id' => $movieId,
-            'image_url' => $image['file_path']
-                ? 'https://image.tmdb.org/t/p/w500' . $image['file_path']
-                : null,
-            'image_width' => $image['width'],
-            'image_height' => $image['height'],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
     }
 }

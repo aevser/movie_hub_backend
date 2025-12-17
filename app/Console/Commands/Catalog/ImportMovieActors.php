@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands\Catalog;
 
+use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\Actor\ImportMovieActorService;
 use Illuminate\Console\Command;
 
 class ImportMovieActors extends Command
 {
+    private const int CHUNK_SIZE = 200;
+
     /**
      * The name and signature of the console command.
      *
@@ -24,19 +27,31 @@ class ImportMovieActors extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ImportMovieActorService $importMovieActorService): int
+    public function handle(MovieRepository $movieRepository, ImportMovieActorService $importMovieActorService): int
     {
-        try {
+        try
+        {
+            $startTime = microtime(true);
 
-            $result = $importMovieActorService->import();
+            $imported = 0;
 
-            $this->info('Импорт актеров завершен. Импортировано: ' . $result . ' актеров.');
+            $movieRepository->chunkById(self::CHUNK_SIZE, function ($movies) use ($importMovieActorService, &$imported)
+            {
+                foreach ($movies as $movie)
+                {
+                    $imported += $importMovieActorService->import(movie: $movie);
+                }
+            });
+
+            $endTime = microtime(true);
+
+            $this->info('Импорт завершён. Загружено актеров  ' . $imported .' Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 
-        } catch (\Exception $e) {
-
-            $this->error('Ошибка импорта актеров: ' . $e->getMessage());
+        } catch (\Exception $exception)
+        {
+            $this->info('Ошибка импорта актеров. ' . $exception->getMessage());
 
             return self::FAILURE;
         }

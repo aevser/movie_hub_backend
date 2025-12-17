@@ -2,6 +2,7 @@
 
 namespace App\Repositories\User\Movie\Review;
 
+use App\Models\Catalog\Movie\Movie;
 use App\Models\User\MovieReview;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -21,6 +22,14 @@ class MovieReviewRepository
             ])
             ->where('user_id', auth()->id())
             ->latest()
+            ->paginate(10);
+    }
+
+    public function getAllReviewsByMovie(int $movieId): LengthAwarePaginator
+    {
+        return $this->movieReview->query()
+            ->where('movie_id', $movieId)
+            ->orderBy('id', 'desc')
             ->paginate(10);
     }
 

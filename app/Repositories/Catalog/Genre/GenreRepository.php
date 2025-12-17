@@ -12,6 +12,13 @@ class GenreRepository
 
     public function __construct(private Genre $genre){}
 
+    public function chunkById(int $size, callable $callback): void
+    {
+        $this->genre->query()
+            ->select(['id', 'movie_db_id'])
+            ->chunkById($size, $callback);
+    }
+
     public function getAllPagination(array $filters): LengthAwarePaginator
     {
         return $this->genre->query()
@@ -33,12 +40,17 @@ class GenreRepository
             ->toArray();
     }
 
-    public function upsert(array $data): void
+    public function updateOrCreate(int $movieDbId, array $data): Genre
     {
-        $this->genre->query()->upsert(
-            $data,
-            ['movie_db_id'],
-            ['name', 'updated_at']
+        return $this->genre->query()->updateOrCreate
+        (
+            ['movie_db_id' => $movieDbId],
+            $data
         );
+    }
+
+    public function attachMoviesBatch(Genre $genre, array $attach): void
+    {
+        $genre->movies()->syncWithoutDetaching($attach);
     }
 }

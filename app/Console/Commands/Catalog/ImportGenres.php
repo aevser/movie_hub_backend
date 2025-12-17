@@ -26,16 +26,20 @@ class ImportGenres extends Command
      */
     public function handle(ImportGenreService $importGenreService): int
     {
-        try {
+        try
+        {
+            $startTime = microtime(true);
 
-            $result = $importGenreService->import();
+            $imported = $importGenreService->import();
 
-            $this->info('Импорт жанров завершен. Импортировано: ' . $result . ' жанров.');
+            $endTime = microtime(true);
+
+            $this->info('Импорт жанров завершен. Импортировано: ' . $imported . ' жанров. Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 
-        } catch (\Exception $e) {
-
+        } catch (\Exception $e)
+        {
             $this->error('Ошибка импорта жанров: ' . $e->getMessage());
 
             return self::FAILURE;

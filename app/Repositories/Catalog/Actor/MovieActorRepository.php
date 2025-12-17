@@ -11,12 +11,12 @@ class MovieActorRepository
 
     public function __construct(private Actor $actor){}
 
-    public function getAllPagination(array $filters): LengthAwarePaginator
+    public function getAllPagination(): LengthAwarePaginator
     {
         return $this->actor->query()
             ->with(self::RELATION)
             ->orderBy('id', 'desc')
-            ->paginate($filters['perPage'] ?? 25);
+            ->paginate(25);
     }
 
     public function findIdByMovieDbId(int $movieDbId): int
@@ -24,6 +24,15 @@ class MovieActorRepository
         return $this->actor->query()
             ->where('movie_db_id', $movieDbId)
             ->value('id');
+    }
+
+    public function updateOrCreate(int $movieDbId, array $data): Actor
+    {
+        return $this->actor->query()->updateOrCreate
+        (
+            ['movie_db_id' => $movieDbId],
+            $data
+        );
     }
 
     public function upsert(array $data): void

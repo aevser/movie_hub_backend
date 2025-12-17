@@ -2,6 +2,7 @@
 
 namespace App\Services\Catalog\Actor;
 
+use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Actor\MovieActorRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
@@ -14,51 +15,42 @@ class ImportMovieActorService
         private MovieActorRepository $movieActorRepository
     ){}
 
-    public function import(): int
+    public function import(Movie $movie): int
     {
-        $movies = $this->movieRepository->getAllCollection();
-        $saved = 0;
+        $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
 
-        foreach ($movies as $movie) {
-            $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
-            $casts = $credits['cast'];
+        $casts = $credits['cast'];
 
-            if (empty($casts)) {
-                continue;
-            }
+        $attach = [];
 
-            foreach ($casts as $actor) {
-                $actorId = $this->saveActor(actor: $actor);
-                $this->attachActor(movieId: $movie->id, actorId: $actorId, character: $actor['character']);
-                $saved++;
-            }
+        if (empty($casts))
+        {
+            return 0;
         }
 
-        return $saved;
-    }
+        foreach ($casts as $cast)
+        {
+            $actor = $this->movieActorRepository->updateOrCreate
+            (
+                movieDbId: $cast['id'],
+                data:
+                [
+                    'name' => $cast['name'],
+                    'image_url' =>
+                        $cast['profile_path']
+                        ? 'https://image.tmdb.org/t/p/w500' . $cast['profile_path']
+                        : null
+                ]
+            );
 
-    private function saveActor(array $actor): int
-    {
-        $this->movieActorRepository->upsert([
-            'movie_db_id' => $actor['id'],
-            'name' => $actor['name'],
-            'image_url' => $actor['profile_path']
-                ? 'https://image.tmdb.org/t/p/w500' . $actor['profile_path']
-                : null,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+            $attach[$actor->id] =
+                [
+                    'character' => $cast['character']
+                ];
+        }
 
-        return $this->movieActorRepository
-            ->findIdByMovieDbId(movieDbId: $actor['id']);
-    }
+        $this->movieRepository->attachActorsBatch(movie: $movie, attach: $attach);
 
-    private function attachActor(int $movieId, int $actorId, string $character): void
-    {
-        $this->movieRepository->attachActors(movieId: $movieId, actorsIds: [
-            $actorId => [
-                'character' => $character
-            ]
-        ]);
+        return count($attach);
     }
 }

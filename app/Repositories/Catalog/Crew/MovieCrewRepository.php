@@ -9,11 +9,11 @@ class MovieCrewRepository
 {
     public function __construct(private Crew $crew){}
 
-    public function getAllPagination(array $filters): LengthAwarePaginator
+    public function getAllPagination(): LengthAwarePaginator
     {
         return $this->crew->query()
             ->orderBy('id', 'desc')
-            ->paginate($filters['perPage'] ?? 25);
+            ->paginate(25);
     }
 
     public function getDirectorByMovieId(int $movieId): ?Crew
@@ -33,12 +33,12 @@ class MovieCrewRepository
             ->value('id');
     }
 
-    public function upsert(array $data): void
+    public function updateOrCreate(int $movieDbId, array $data): Crew
     {
-        $this->crew->query()->upsert(
-            $data,
-            ['movie_db_id'],
-            ['name', 'image_url', 'updated_at']
+        return $this->crew->query()->updateOrCreate
+        (
+            ['movie_db_id' => $movieDbId],
+            $data
         );
     }
 }

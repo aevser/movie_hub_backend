@@ -30,6 +30,13 @@ class MovieRepository
             ->paginate($filters['perPage'] ?? 25);
     }
 
+    public function chunkById(int $size, callable $callback): void
+    {
+        $this->movie->query()
+            ->select(['id', 'movie_db_id'])
+            ->chunkById($size, $callback);
+    }
+
     public function getAllCollection(): Collection
     {
         return $this->movie->query()->get();
@@ -55,45 +62,23 @@ class MovieRepository
         return $this->movie->query()->with(self::RELATIONS)->findOrFail($id);
     }
 
-    public function findIdsByMovieDbIds(array $movieDbIds): array
+    public function updateOrCreate(int $movieDbId, array $data): Movie
     {
-        return $this->movie->query()
-            ->whereIn('movie_db_id', $movieDbIds)
-            ->pluck('id', 'movie_db_id')
-            ->toArray();
-    }
-
-    public function upsert(array $data): void
-    {
-        $this->movie->query()->upsert(
-            $data,
-            ['movie_db_id'],
-            ['title', 'description', 'poster_url', 'release_date', 'updated_at']
+        return $this->movie->query()->updateOrCreate
+        (
+            ['movie_db_id' => $movieDbId],
+            $data
         );
     }
 
-    public function attachGenres(int $movieId, array $genresIds): void
+    public function attachActorsBatch(Movie $movie, array $attach): void
     {
-        $this->movie->query()
-            ->findOrFail($movieId)
-            ->genres()
-            ->syncWithoutDetaching($genresIds);
+        $movie->actors()->syncWithoutDetaching($attach);
     }
 
-    public function attachActors(int $movieId, array $actorsIds): void
+    public function attachCrewsBatch(Movie $movie, array $attach): void
     {
-        $this->movie->query()
-            ->findOrFail($movieId)
-            ->actors()
-            ->syncWithoutDetaching($actorsIds);
-    }
-
-    public function attachCrews(int $movieId, array $crewIds): void
-    {
-        $this->movie->query()
-            ->findOrFail($movieId)
-            ->crews()
-            ->syncWithoutDetaching($crewIds);
+        $movie->crews()->syncWithoutDetaching($attach);
     }
 }
 

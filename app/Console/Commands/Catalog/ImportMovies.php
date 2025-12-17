@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands\Catalog;
 
+use App\Repositories\Catalog\Genre\GenreRepository;
 use App\Services\Catalog\Movie\ImportMovieService;
 use Illuminate\Console\Command;
 
 class ImportMovies extends Command
 {
-    private const int LIMIT = 5;
+    private const int CHUNK_SIZE = 50;
+    private const int LIMIT = 100;
 
     /**
      * The name and signature of the console command.
@@ -26,13 +28,24 @@ class ImportMovies extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ImportMovieService $importMovieService): int
+    public function handle(GenreRepository $genreRepository, ImportMovieService $importMovieService): int
     {
         try {
+            $startTime = microtime(true);
 
-            $result = $importMovieService->import(self::LIMIT);
+            $imported = 0;
 
-            $this->info('Импортировано: ' . $result . ' фильмов.');
+            $genreRepository->chunkById(self::CHUNK_SIZE, function ($genres) use ($importMovieService, &$imported)
+            {
+                foreach ($genres as $genre)
+                {
+                    $imported += $importMovieService->import(genre: $genre, limit: self::LIMIT);
+                }
+            });
+
+            $endTime = microtime(true);
+
+            $this->info('Импорт фильмов завершен. Импортировано: ' . $imported . ' фильмов. Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 

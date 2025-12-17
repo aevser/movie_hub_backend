@@ -2,6 +2,7 @@
 
 namespace App\Services\Catalog\Movie;
 
+use App\Models\Catalog\Genre\Genre;
 use App\Repositories\Catalog\Genre\GenreRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
@@ -15,70 +16,56 @@ class ImportMovieService
         private MovieRepository $movieRepository
     ){}
 
-    public function import(int $limit): int
+    public function import(Genre $genre, int $limit): int
     {
-        $genres = $this->genreRepository->getAllCollection();
-        $saved = 0;
+        $attach = [];
 
-        foreach ($genres as $genre) {
-            $page = 1;
-            $savedPerGenre = 0;
+        $page = 1;
 
-            while ($savedPerGenre < $limit) {
-                $movies = $this->movieClientService->movies(
-                    genreMovieDbId: $genre->movie_db_id,
-                    page: $page
+        $imported = 0;
+
+        do
+        {
+            $movies = $this->movieClientService->movies(genreMovieDbId: $genre->movie_db_id, page: $page);
+
+            if (empty($movies))
+            {
+                break;
+            }
+
+            foreach ($movies as $movie)
+            {
+                if ($imported >= $limit)
+                {
+                    break 2;
+                }
+
+                $item = $this->movieRepository->updateOrCreate
+                (
+                    movieDbId: $movie['id'],
+                    data:
+                    [
+                        'title' => $movie['title'],
+                        'slug' => Str::slug($movie['title']),
+                        'description' => $movie['overview'],
+                        'poster_url' => $movie['poster_path']
+                            ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']
+                            : null,
+                        'release_date' => $movie['release_date']
+                    ]
                 );
 
-                if (empty($movies)) {
-                    break;
-                }
+                $attach[$item->id] = [];
 
-                foreach ($movies as $movie) {
-                    if ($savedPerGenre >= $limit) {
-                        break;
-                    }
-
-                    $movieId = $this->saveMovie(movie: $movie);
-                    $this->attachGenres(movieId: $movieId, genresIds: $movie['genre_ids'] ?? []);
-
-                    $savedPerGenre++;
-                    $saved++;
-                }
-
-                $page++;
+                $imported++;
             }
-        }
 
-        return $saved;
-    }
+            $page++;
 
-    private function saveMovie(array $movie): int
-    {
-        $this->movieRepository->upsert([
-            'movie_db_id' => $movie['id'],
-            'title' => $movie['title'],
-            'slug' => Str::slug($movie['title'], '-', 'ru'),
-            'description' => $movie['overview'],
-            'poster_url' => $movie['poster_path']
-                ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']
-                : null,
-            'release_date' => $movie['release_date'],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        } while ($imported < $limit);
 
-        return $this->movieRepository
-            ->findIdsByMovieDbIds([$movie['id']])[$movie['id']];
-    }
+        $this->genreRepository->attachMoviesBatch(genre: $genre, attach: $attach);
 
-    private function attachGenres(int $movieId, array $genresIds): void
-    {
-        if (empty($genresIds)) {
-            return;
-        }
-
-        $genreIds = $this->genreRepository->findIdsByMovieDbIds(movieDbIds: $genresIds);
-        $this->movieRepository->attachGenres(movieId: $movieId, genresIds: $genreIds);
+        return $imported;
     }
 }

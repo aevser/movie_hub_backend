@@ -2,51 +2,49 @@
 
 namespace App\Services\Catalog\Movie\Backdrop;
 
+use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Movie\Backdrop\MovieBackdropImageRepository;
-use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
 
 class ImportMovieBackdropImageService
 {
     public function __construct(
         private MovieClientService $movieClientService,
-        private MovieRepository $movieRepository,
         private MovieBackdropImageRepository $movieBackdropImageRepository
     ){}
 
-    public function import(): int
+    public function import(Movie $movie): int
     {
-        $movies = $this->movieRepository->getAllCollection();
-        $saved = 0;
+       $images = $this->movieClientService->images(movieId: $movie->movie_db_id);
 
-        foreach ($movies as $movie) {
-            $images = $this->movieClientService->images(movieId: $movie->movie_db_id);
-            $backdrops = $images['backdrops'];
+       $backdrops = $images['backdrops'];
 
-            if (empty($backdrops)) {
-                continue;
-            }
+       $saved = 0;
 
-            foreach ($backdrops as $backdrop) {
-                $this->saveImage(movieId: $movie->id, backdrop: $backdrop);
-                $saved++;
-            }
-        }
+       if (empty($backdrops))
+       {
+           return 0;
+       }
 
-        return $saved;
-    }
+       foreach ($backdrops as $backdrop)
+       {
+           $this->movieBackdropImageRepository->updateOrCreate
+           (
+               movieId: $movie->id,
+               data:
+               [
+                   'image_url' =>
+                       $backdrop['file_path']
+                           ? 'https://image.tmdb.org/t/p/w500' . $backdrop['file_path']
+                           : null,
+                   'image_width' => $backdrop['width'],
+                   'image_height' => $backdrop['height']
+               ]
+           );
 
-    private function saveImage(int $movieId, array $backdrop): void
-    {
-        $this->movieBackdropImageRepository->firstOrCreate([
-            'movie_id' => $movieId,
-            'image_url' => $backdrop['file_path']
-                ? 'https://image.tmdb.org/t/p/w500' . $backdrop['file_path']
-                : null,
-            'image_width' => $backdrop['width'],
-            'image_height' => $backdrop['height'],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+           $saved++;
+       }
+
+       return $saved;
     }
 }

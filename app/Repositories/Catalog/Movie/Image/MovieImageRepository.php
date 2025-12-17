@@ -21,4 +21,13 @@ class MovieImageRepository
     {
         return $this->movieImage->query()->firstOrCreate($data);
     }
+
+    public function updateOrCreate(int $movieId, array $data): MovieImage
+    {
+        return $this->movieImage->query()->updateOrCreate
+        (
+            ['movie_id' => $movieId],
+            $data
+        );
+    }
 }

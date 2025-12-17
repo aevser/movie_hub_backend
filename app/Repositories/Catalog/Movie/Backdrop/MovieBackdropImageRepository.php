@@ -12,4 +12,13 @@ class MovieBackdropImageRepository
     {
         return $this->movieBackdropImage->query()->firstOrCreate($data);
     }
+
+    public function updateOrCreate(int $movieId, array $data): MovieBackdropImage
+    {
+        return $this->movieBackdropImage->query()->updateOrCreate
+        (
+            ['movie_id' => $movieId],
+            $data
+        );
+    }
 }

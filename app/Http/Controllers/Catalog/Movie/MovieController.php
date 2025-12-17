@@ -37,7 +37,7 @@ class MovieController extends Controller
 
         $images = $this->movieImageRepository->getAllByMovie(movieId: $movie->id);
 
-        $reviews = $this->movieReviewRepository->getAllReviews();
+        $reviews = $this->movieReviewRepository->getAllReviewsByMovie($movie->id);
 
         $isFavorite = $this->userRepository->isFavoriteMovie(auth()->user(), $movie);
 
