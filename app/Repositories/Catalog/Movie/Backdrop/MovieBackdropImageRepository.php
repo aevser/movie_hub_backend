@@ -8,16 +8,13 @@ class MovieBackdropImageRepository
 {
     public function __construct(private MovieBackdropImage $movieBackdropImage){}
 
-    public function firstOrCreate(array $data): MovieBackdropImage
-    {
-        return $this->movieBackdropImage->query()->firstOrCreate($data);
-    }
-
     public function updateOrCreate(int $movieId, array $data): MovieBackdropImage
     {
         return $this->movieBackdropImage->query()->updateOrCreate
         (
-            ['movie_id' => $movieId],
+            [
+                'movie_id' => $movieId
+            ],
             $data
         );
     }

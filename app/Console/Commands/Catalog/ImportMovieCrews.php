@@ -44,7 +44,7 @@ class ImportMovieCrews extends Command
 
             $endTime = microtime(true);
 
-            $this->info('Импорт завершён. Загружено членов команды: ' . $imported .' Затрачено время: ' . round($endTime - $startTime) . ' сек.');
+            $this->info('Импорт завершён. Загружено: ' . $imported .' членов команды. Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 

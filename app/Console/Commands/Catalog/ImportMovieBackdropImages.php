@@ -6,7 +6,7 @@ use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\Movie\Backdrop\ImportMovieBackdropImageService;
 use Illuminate\Console\Command;
 
-class ImportMovieBackdrops extends Command
+class ImportMovieBackdropImages extends Command
 {
     private const int CHUNK_SIZE = 200;
 
@@ -15,7 +15,7 @@ class ImportMovieBackdrops extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-movie-backdrops';
+    protected $signature = 'app:import-movie-backdrop-images';
 
     /**
      * The console command description.
@@ -50,7 +50,7 @@ class ImportMovieBackdrops extends Command
 
         } catch (\Exception $e)
         {
-            $this->error('Ошибка импорта постеров: ' . $e->getMessage());
+            $this->error('Ошибка импорта заднего фона: ' . $e->getMessage());
 
             return self::FAILURE;
         }

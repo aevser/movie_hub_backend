@@ -7,7 +7,7 @@
 
         <div class="page-header mb-4">
             <div class="movie-title-row mb-2">
-                <a href="{{ route('genres.movies.index', $genre) }}" class="back-link">←</a>
+                <a href="{{ route('catalog.genres.movies.index', $genre) }}" class="back-link">←</a>
                 <h1 class="movie-title">{{ $movie->title }}</h1>
 
                 @auth
@@ -38,10 +38,10 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('genres.index') }}">Жанры</a>
+                        <a href="{{ route('catalog.genres.index') }}">Жанры</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('genres.movies.index', $genre) }}">
+                        <a href="{{ route('catalog.genres.movies.index', $genre) }}">
                             {{ $genre->name }}
                         </a>
                     </li>
@@ -99,7 +99,7 @@
 
                             @foreach($movie->genres as $item)
                                 <a
-                                    href="{{ route('genres.movies.index', $item) }}"
+                                    href="{{ route('catalog.genres.movies.index', $item) }}"
                                     class="genre-link"
                                 >
                                     {{ $item->name }}@if(!$loop->last),@endif
@@ -192,7 +192,7 @@
                                             @if(auth()->id() === $review->user_id)
                                                 <form
                                                     method="POST"
-                                                    action="{{ route('reviews.destroy', [$genre, $movie, $review]) }}"
+                                                    action="{{ route('reviews.destroy', $review) }}"
                                                     onsubmit="return confirm('Удалить отзыв?')"
                                                     class="d-inline"
                                                 >

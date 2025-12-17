@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
     public function show(): View
     {
-        return view('user.auth.login.show');
+        return view('login.show');
     }
 
     public function login(LoginRequest $request): RedirectResponse
@@ -19,7 +19,7 @@ class LoginController extends Controller
         if (!auth()->attempt($request->only('email', 'password'))) {
             return back()
                 ->withErrors(['email' => 'Неверная почта или пароль'])
-                ->withInput();
+                ->onlyInput('email');
         }
 
         return redirect()->route('genres.index');

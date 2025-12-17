@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api\V1\Catalog\Genre;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Catalog\Genre\IndexGenreRequest;
-use App\Http\Resources\V1\Catalog\Genre\IndexGenreResource;
-use App\Repositories\Catalog\Genre\GenreRepository;
+use App\Http\Requests\V1\Catalog\Genre\IndexMovieGenreRequest;
+use App\Http\Resources\V1\Catalog\Genre\IndexMovieGenreResource;
+use App\Repositories\Catalog\Genre\MovieGenreRepository;
 use Illuminate\Http\JsonResponse;
 
 class GenreController extends Controller
 {
-    public function __construct(private GenreRepository $genreRepository){}
+    public function __construct(private MovieGenreRepository $genreRepository){}
 
-    public function index(IndexGenreRequest $request): JsonResponse
+    public function index(IndexMovieGenreRequest $request): JsonResponse
     {
         $genres = $this->genreRepository->getAllPagination(filters: $request->validated());
 
-        return response()->json(['data' => IndexGenreResource::collection($genres), 'code' => JsonResponse::HTTP_OK]);
+        return response()->json(['data' => IndexMovieGenreResource::collection($genres), 'code' => JsonResponse::HTTP_OK]);
     }
 }

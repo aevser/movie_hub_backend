@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1\Catalog\Genre;
+namespace App\Http\Requests\V1\Catalog\Actor;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexGenreRequest extends FormRequest
+class IndexMovieActorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

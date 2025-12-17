@@ -9,7 +9,7 @@
             </div>
 
             <a
-                href="{{ route('genres.index') }}"
+                href="{{ route('catalog.genres.index') }}"
                 class="nav-tab"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">

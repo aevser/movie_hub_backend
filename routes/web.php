@@ -3,41 +3,88 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::prefix('catalog')
+    ->name('catalog.')
+    ->group(function () {
 
-Route::prefix('catalog')->group(function () {
-    Route::get('/', [Controllers\Catalog\Genre\GenreController::class, 'index'])->name('genres.index');
+        Route::get('/', [
+            Controllers\Catalog\Genre\GenreController::class,
+            'index'
+        ])->name('genres.index');
 
-    Route::get('{genre}/movies', [Controllers\Catalog\Movie\MovieController::class, 'index'])->name('genres.movies.index');
+        Route::prefix('{genre}')
+            ->group(function () {
 
-    Route::get('{genre}/{movie}', [Controllers\Catalog\Movie\MovieController::class, 'show'])->name('genres.movies.show');
-});
+                Route::get('movies', [
+                    Controllers\Catalog\Movie\MovieController::class,
+                    'index'
+                ])->name('genres.movies.index');
 
-Route::get('registration', [Controllers\User\Registration\RegistrationController::class, 'show'])->name('registration.show');
+                Route::get('movies/{movie}', [
+                    Controllers\Catalog\Movie\MovieController::class,
+                    'show'
+                ])->name('genres.movies.show');
 
-Route::post('registration', [Controllers\User\Registration\RegistrationController::class, 'store'])->name('registration.store');
+            });
+    });
 
-Route::get('login', [Controllers\User\Auth\LoginController::class, 'show'])->name('login.show');
+Route::get('registration', [
+    Controllers\User\Registration\RegistrationController::class,
+    'show'
+])->name('registration.show');
 
-Route::post('login', [Controllers\User\Auth\LoginController::class, 'login'])->name('login');
+Route::post('registration', [
+    Controllers\User\Registration\RegistrationController::class,
+    'store'
+])->name('registration.store');
 
-Route::middleware('auth')->group(function () {
-    Route::get('reviews', [Controllers\User\Review\ReviewController::class, 'show'])->name('reviews.index');
+Route::get('login', [
+    Controllers\User\Auth\LoginController::class,
+    'show'
+])->name('login.show');
 
-    Route::delete('reviews/{id}', [Controllers\User\Review\ReviewController::class, 'destroy'])->name('reviews.destroy');
+Route::post('login', [
+    Controllers\User\Auth\LoginController::class,
+    'login'
+])->name('login');
 
-    Route::get('favorites', [Controllers\User\UserController::class, 'show'])->name('favorites.index');
+Route::post('logout', [
+    Controllers\User\Auth\LogoutController::class,
+    'logout'
+])->middleware('auth')->name('logout');
 
-    Route::post('{genre}/{movie}/reviews', [Controllers\User\Review\ReviewController::class, 'store'])->name('reviews.store');
 
-    Route::delete('{genre}/{movie}/reviews/{id}', [Controllers\User\Review\ReviewController::class, 'destroy'])->name('reviews.destroy');
+Route::middleware('auth')
+    ->group(function () {
 
-    Route::post('favorites/{movie}', [Controllers\User\UserController::class, 'addFavorite'])->name('favorites.store');
+        Route::get('reviews', [
+            Controllers\User\Review\ReviewController::class,
+            'index'
+        ])->name('reviews.index');
 
-    Route::delete('favorites/{movie}', [Controllers\User\UserController::class, 'removeFavorite'])->name('favorites.destroy');
+        Route::delete('reviews/{review}', [
+            Controllers\User\Review\ReviewController::class,
+            'destroy'
+        ])->name('reviews.destroy');
 
-    Route::post('logout', [Controllers\User\Auth\LogoutController::class, 'logout'])->name('logout');
-});
+        Route::post('{genre}/{movie}/reviews', [
+            Controllers\User\Review\ReviewController::class,
+            'store'
+        ])->name('reviews.store');
 
+        Route::get('favorites', [
+            Controllers\User\UserController::class,
+            'show'
+        ])->name('favorites.index');
+
+        Route::post('favorites/{movie}', [
+            Controllers\User\UserController::class,
+            'addFavorite'
+        ])->name('favorites.store');
+
+        Route::delete('favorites/{movie}', [
+            Controllers\User\UserController::class,
+            'removeFavorite'
+        ])->name('favorites.destroy');
+
+    });

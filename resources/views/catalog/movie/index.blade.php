@@ -14,7 +14,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('genres.index') }}">Жанры</a>
+                        <a href="{{ route('catalog.genres.index') }}">Жанры</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ $genre->name }}
@@ -60,7 +60,7 @@
                         </p>
 
                         <div class="mt-auto">
-                            <a href="{{ route('genres.movies.show', [$genre, $movie]) }}"
+                            <a href="{{ route('catalog.genres.movies.show', [$genre, $movie]) }}"
                                class="btn btn-outline-primary btn-sm">
                                 Подробнее
                             </a>

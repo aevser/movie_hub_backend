@@ -14,7 +14,7 @@
             <div class="movies-grid">
                 @foreach($favorites as $movie)
                     <div class="movie-card">
-                        <a href="{{ route('genres.movies.show', [$movie->genres->first(), $movie]) }}" class="movie-card-link">
+                        <a href="{{ route('catalog.genres.movies.show', [$movie->genres->first(), $movie]) }}" class="movie-card-link">
                             <div class="movie-card-poster">
                                 <img src="{{ $movie->poster_url }}" alt="{{ $movie->title }}">
                             </div>
@@ -61,7 +61,7 @@
                 </svg>
                 <h3 class="empty-title">Нет избранных фильмов</h3>
                 <p class="empty-text">Добавьте фильмы в избранное, чтобы они появились здесь</p>
-                <a href="{{ route('genres.index') }}" class="btn-back">
+                <a href="{{ route('catalog.genres.index') }}" class="btn-back">
                     Смотреть фильмы
                 </a>
             </div>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('image_height')->nullable();
             $table->timestamps();
 
-            $table->index('movie_id');
+            $table->unique('movie_id');
         });
     }
 

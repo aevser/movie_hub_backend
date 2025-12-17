@@ -10,7 +10,7 @@
 
     <div class="genre-list d-flex flex-column gap-3">
         @forelse ($genres as $genre)
-            <a href="{{ route('genres.movies.index', $genre) }}" class="genre-row">
+            <a href="{{ route('catalog.genres.movies.index', $genre) }}" class="genre-row">
                 <span class="genre-title">{{ $genre->name }}</span>
                 <span class="genre-arrow">→</span>
             </a>

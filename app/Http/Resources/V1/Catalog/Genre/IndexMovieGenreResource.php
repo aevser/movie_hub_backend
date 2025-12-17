@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Resources\V1\Catalog\Movie\Backdrop;
+namespace App\Http\Resources\V1\Catalog\Genre;
 
+use App\Http\Resources\V1\Catalog\Movie\IndexMovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class IndexBackdropImageResource extends JsonResource
+class IndexMovieGenreResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +17,7 @@ class IndexBackdropImageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image_url' => $this->image_url,
-            'image_width' => $this->image_wigth,
-            'image_height' => $this->image_height
+            'name' => $this->name
         ];
     }
 }

@@ -49,7 +49,7 @@ class ImportMovieActorService
                 ];
         }
 
-        $this->movieRepository->attachActorsBatch(movie: $movie, attach: $attach);
+        $this->movieRepository->attachActors(movie: $movie, attach: $attach);
 
         return count($attach);
     }

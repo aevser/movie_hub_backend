@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Resources\V1\Catalog\Genre;
+namespace App\Http\Resources\V1\Catalog\Actor;
 
-use App\Http\Resources\V1\Catalog\Movie\IndexMovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class IndexGenreResource extends JsonResource
+class IndexMovieActorResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

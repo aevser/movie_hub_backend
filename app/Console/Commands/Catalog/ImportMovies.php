@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands\Catalog;
 
-use App\Repositories\Catalog\Genre\GenreRepository;
+use App\Repositories\Catalog\Genre\MovieGenreRepository;
 use App\Services\Catalog\Movie\ImportMovieService;
 use Illuminate\Console\Command;
 
 class ImportMovies extends Command
 {
-    private const int CHUNK_SIZE = 50;
-    private const int LIMIT = 100;
+    private const int CHUNK_SIZE = 30;
+    private const int LIMIT = 7;
 
     /**
      * The name and signature of the console command.
@@ -28,7 +28,7 @@ class ImportMovies extends Command
     /**
      * Execute the console command.
      */
-    public function handle(GenreRepository $genreRepository, ImportMovieService $importMovieService): int
+    public function handle(MovieGenreRepository $genreRepository, ImportMovieService $importMovieService): int
     {
         try {
             $startTime = microtime(true);

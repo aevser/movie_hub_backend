@@ -15,7 +15,7 @@
                 @foreach($reviews as $review)
                     <div class="review-item">
                         <div class="review-movie">
-                            <a href="{{ route('genres.movies.show', [$review->movie->genres->first()->slug, $review->movie->slug]) }}" class="review-movie-link">                                <div class="review-movie-poster">
+                            <a href="{{ route('catalog.genres.movies.show', [$review->movie->genres->first()->slug, $review->movie->slug]) }}" class="review-movie-link">                                <div class="review-movie-poster">
                                     <img src="{{ $review->movie->poster_url }}" alt="{{ $review->movie->title }}">
                                 </div>
                                 <div class="review-movie-info">
@@ -72,7 +72,7 @@
                 </svg>
                 <h3 class="empty-title">Нет отзывов</h3>
                 <p class="empty-text">Вы ещё не оставляли отзывов на фильмы</p>
-                <a href="{{ route('genres.index') }}" class="btn-back">
+                <a href="{{ route('catalog.genres.index') }}" class="btn-back">
                     Смотреть фильмы
                 </a>
             </div>

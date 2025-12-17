@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
-        $schedule->command('app:import-genres')->withoutOverlapping()->daily();
+        $schedule->command('app:import-movie-genres')->withoutOverlapping()->daily();
 
         $schedule->command('app:import-movies')->withoutOverlapping()->daily();
 
@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $schedule->command('app:import-movie-images')->withoutOverlapping()->daily();
 
-        $schedule->command('app:import-movie-backdrops')->withoutOverlapping()->daily();
+        $schedule->command('app:import-movie-backdrop-images')->withoutOverlapping()->daily();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         //

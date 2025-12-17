@@ -2,14 +2,14 @@
 
 namespace App\Repositories\Catalog\Movie;
 
+use App\Constants\Pagination;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository
 {
-    private const array RELATIONS = [
+    private const array FULL_RELATIONS = [
         'actors',
         'genres',
         'crews',
@@ -18,67 +18,71 @@ class MovieRepository
         'reviews'
     ];
 
-    private const string RELATION = 'genres';
+    private const array LIST_RELATIONS = ['genres'];
 
     public function __construct(private Movie $movie){}
 
-    public function getAllPagination(array $filters): LengthAwarePaginator
+    public function paginate(array $filters): LengthAwarePaginator
     {
         return $this->movie->query()
-            ->with(self::RELATION)
-            ->orderBy('id', 'desc')
-            ->paginate($filters['perPage'] ?? 25);
+            ->with(self::LIST_RELATIONS)
+            ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
+            ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+    }
+
+    public function paginateByGenre(Genre $genre, array $filters): LengthAwarePaginator
+    {
+        return $genre->movies()
+            ->with(self::LIST_RELATIONS)
+            ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
+            ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
     }
 
     public function chunkById(int $size, callable $callback): void
     {
         $this->movie->query()
-            ->select(['id', 'movie_db_id'])
+            ->select(
+                [
+                    'id', 'movie_db_id'
+                ]
+            )
             ->chunkById($size, $callback);
     }
 
-    public function getAllCollection(): Collection
+    public function find(int $id): Movie
     {
-        return $this->movie->query()->get();
-    }
-
-    public function getAllByGenre(Genre $genre): LengthAwarePaginator
-    {
-        return $genre->movies()
-            ->with(self::RELATION)
-            ->orderBy('id', 'desc')
-            ->paginate($genre['perPage'] ?? 5);
-    }
-
-    public function getOneByGenre(Genre $genre, int $id): Movie
-    {
-        return $genre->movies()
-            ->with(self::RELATIONS)
+        return $this->movie->query()
+            ->with(self::FULL_RELATIONS)
             ->findOrFail($id);
     }
 
-    public function findById(int $id): Movie
+    public function findByGenre(Genre $genre, int $movieId): Movie
     {
-        return $this->movie->query()->with(self::RELATIONS)->findOrFail($id);
+        return $genre->movies()
+            ->with(self::FULL_RELATIONS)
+            ->findOrFail($movieId);
     }
 
     public function updateOrCreate(int $movieDbId, array $data): Movie
     {
         return $this->movie->query()->updateOrCreate
         (
-            ['movie_db_id' => $movieDbId],
+            [
+                'movie_db_id' => $movieDbId
+            ],
             $data
         );
     }
 
-    public function attachActorsBatch(Movie $movie, array $attach): void
+    public function attachActors(Movie $movie, array $ids): void
     {
-        $movie->actors()->syncWithoutDetaching($attach);
+        $movie->actors()
+            ->syncWithoutDetaching($ids);
     }
 
-    public function attachCrewsBatch(Movie $movie, array $attach): void
+    public function attachCrews(Movie $movie, array $ids): void
     {
-        $movie->crews()->syncWithoutDetaching($attach);
+        $movie->crews()
+            ->syncWithoutDetaching($ids);
     }
 }
-

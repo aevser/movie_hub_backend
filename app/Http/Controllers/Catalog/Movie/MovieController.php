@@ -24,25 +24,41 @@ class MovieController extends Controller
 
     public function index(Genre $genre): View
     {
-        $movies = $this->movieRepository->getAllByGenre(genre: $genre);
-
-        return view('catalog.movie.index', compact('movies', 'genre'));
+        return view('catalog.movie.index',
+            [
+                'genre' => $genre,
+                'movies' => $this->movieRepository->paginateByGenre(
+                    genre: $genre,
+                    filters: []
+                )
+            ]
+        );
     }
 
     public function show(Genre $genre, Movie $movie): View
     {
-        $movie = $this->movieRepository->getOneByGenre(genre: $genre, id: $movie->id);
+        $user = auth()->user();
 
-        $director = $this->movieCrewRepository->getDirectorByMovieId(movieId: $movie->id);
+        return view('catalog.movie.show',
+            [
+                'genre' => $genre,
+                'movie' => $this->movieRepository->findByGenre(
+                    genre: $genre,
+                    movieId: $movie->id
+                ),
 
-        $images = $this->movieImageRepository->getAllByMovie(movieId: $movie->id);
-
-        $reviews = $this->movieReviewRepository->getAllReviewsByMovie($movie->id);
-
-        $isFavorite = $this->userRepository->isFavoriteMovie(auth()->user(), $movie);
-
-        $userReviewExists = $this->movieReviewRepository->existsReview(userId: auth()->id(), movieId: $movie->id);
-
-        return view('catalog.movie.show', compact('movie', 'genre', 'director', 'images', 'reviews', 'isFavorite', 'userReviewExists'));
+                'director' => $this->movieCrewRepository->findDirectorByMovie($movie),
+                'images' => $this->movieImageRepository->getByMovie($movie->id),
+                'reviews' => $this->movieReviewRepository->getAllByMovie($movie->id),
+                'isFavorite' => $this->userRepository->existsFavoriteMovie(
+                    user: $user,
+                    movie: $movie
+                ),
+                'userReviewExists' => $this->movieReviewRepository->existsByUserAndMovie(
+                    user: $user,
+                    movieId: $movie->id
+                )
+            ]
+        );
     }
 }

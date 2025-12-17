@@ -38,9 +38,13 @@ class MovieClientService
 
     private function get(string $url, array $params): array
     {
-        $response = Http::retry(3, 200)->get(
+        $response = Http::retry(3, 200)->get
+        (
             config('movie.movie_db_url') . $url,
-            $params + ['api_key' => config('movie.movie_db_api_key'), 'language' => 'ru']
+            $params +
+            [
+                'api_key' => config('movie.movie_db_api_key'), 'language' => 'ru'
+            ]
         );
 
         return $response->successful() ? $response->json() : [];

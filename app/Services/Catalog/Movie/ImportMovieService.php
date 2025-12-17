@@ -3,7 +3,7 @@
 namespace App\Services\Catalog\Movie;
 
 use App\Models\Catalog\Genre\Genre;
-use App\Repositories\Catalog\Genre\GenreRepository;
+use App\Repositories\Catalog\Genre\MovieGenreRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Services\Catalog\MovieClientService;
 use Illuminate\Support\Str;
@@ -11,9 +11,9 @@ use Illuminate\Support\Str;
 class ImportMovieService
 {
     public function __construct(
-        private MovieClientService $movieClientService,
-        private GenreRepository $genreRepository,
-        private MovieRepository $movieRepository
+        private MovieClientService   $movieClientService,
+        private MovieGenreRepository $genreRepository,
+        private MovieRepository      $movieRepository
     ){}
 
     public function import(Genre $genre, int $limit): int
@@ -64,7 +64,7 @@ class ImportMovieService
 
         } while ($imported < $limit);
 
-        $this->genreRepository->attachMoviesBatch(genre: $genre, attach: $attach);
+        $this->genreRepository->attachMovies(genre: $genre, attach: $attach);
 
         return $imported;
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\V1\Catalog\Movie;
 
-use App\Http\Resources\V1\Catalog\Actor\IndexActorResource;
+use App\Http\Resources\V1\Catalog\Actor\IndexMovieActorResource;
 use App\Http\Resources\V1\Catalog\Crew\IndexCrewResource;
-use App\Http\Resources\V1\Catalog\Genre\IndexGenreResource;
+use App\Http\Resources\V1\Catalog\Genre\IndexMovieGenreResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +24,8 @@ class IndexMovieResource extends JsonResource
             'poster_url' => $this->poster_url,
             'release_date' => $this->release_date,
 
-            'genres' => IndexGenreResource::collection(
+            'genres' => IndexMovieGenreResource::collection
+            (
                 $this->whenLoaded('genres')
             )
         ];

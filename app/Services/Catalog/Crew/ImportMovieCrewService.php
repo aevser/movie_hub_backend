@@ -32,7 +32,7 @@ class ImportMovieCrewService
         {
             $crew = $this->movieCrewRepository->updateOrCreate
             (
-                movieDbId: $crew['id'],
+                movieDbId: $movie['id'],
                 data:
                 [
                     'name' => $crew['name'],
@@ -50,7 +50,7 @@ class ImportMovieCrewService
                 ];
         }
 
-        $this->movieRepository->attachCrewsBatch(movie: $movie, attach: $attach);
+        $this->movieRepository->attachCrews(movie: $movie, attach: $attach);
 
         return count($attach);
     }

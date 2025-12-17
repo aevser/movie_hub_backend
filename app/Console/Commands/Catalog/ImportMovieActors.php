@@ -45,7 +45,7 @@ class ImportMovieActors extends Command
 
             $endTime = microtime(true);
 
-            $this->info('Импорт завершён. Загружено актеров  ' . $imported .' Затрачено время: ' . round($endTime - $startTime) . ' сек.');
+            $this->info('Импорт завершён. Импортировано: ' . $imported .'актеров. Затрачено время: ' . round($endTime - $startTime) . ' сек.');
 
             return self::SUCCESS;
 

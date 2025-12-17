@@ -2,15 +2,15 @@
 
 namespace App\Services\Catalog\Genre;
 
-use App\Repositories\Catalog\Genre\GenreRepository;
+use App\Repositories\Catalog\Genre\MovieGenreRepository;
 use App\Services\Catalog\MovieClientService;
 use Illuminate\Support\Str;
 
-class ImportGenreService
+class ImportMovieGenreService
 {
     public function __construct(
         private MovieClientService $movieClientService,
-        private GenreRepository $genreRepository
+        private MovieGenreRepository $genreRepository
     ){}
 
     public function import(): int

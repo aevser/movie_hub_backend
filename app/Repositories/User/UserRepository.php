@@ -2,6 +2,7 @@
 
 namespace App\Repositories\User;
 
+use App\Constants\Pagination;
 use App\Models\Catalog\Movie\Movie;
 use App\Models\User\User;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -10,12 +11,11 @@ class UserRepository
 {
     public function __construct(private User $user){}
 
-    public function getAllFavoriteMovies(User $user): LengthAwarePaginator
+    public function paginate(User $user): LengthAwarePaginator
     {
         return $user->favoriteMovies()
-            ->where('user_id', $user->id)
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
+            ->paginate(Pagination::PER_PAGE);
     }
 
     public function create(array $data): User
@@ -23,22 +23,25 @@ class UserRepository
         return $this->user->query()->create($data);
     }
 
-    public function addFavoriteMovie(User $user, Movie $movie): void
+    public function attachFavoriteMovie(User $user, Movie $movie): void
     {
-        $user->favoriteMovies()->attach($movie->id);
+        $user->favoriteMovies()->syncWithoutDetaching($movie->id);
     }
 
-    public function removeFavoriteMovie(User $user, Movie $movie): void
+    public function detachFavoriteMovie(User $user, Movie $movie): void
     {
         $user->favoriteMovies()->detach($movie->id);
     }
 
-    public function isFavoriteMovie(?User $user, Movie $movie): bool
+    public function existsFavoriteMovie(?User $user, Movie $movie): bool
     {
-        if ($user) {
-            return $user->favoriteMovies()->where('movie_id', $movie->id)->exists();
+        if ($user === null)
+        {
+            return false;
         }
 
-        return false;
+        return $user->favoriteMovies()
+            ->where('movie_id', $movie->id)
+            ->exists();
     }
 }

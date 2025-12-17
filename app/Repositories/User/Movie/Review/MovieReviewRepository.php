@@ -2,41 +2,34 @@
 
 namespace App\Repositories\User\Movie\Review;
 
-use App\Models\Catalog\Movie\Movie;
 use App\Models\User\MovieReview;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieReviewRepository
 {
-    private const array RELATIONS = ['movie:id,title,slug,poster_url,release_date, movie.genres'];
+    private const array LIST_RELATIONS =
+    [
+        'movie:id,title,slug,poster_url,release_date',
+        'movie.genres:id,name,slug'
+    ];
 
     public function __construct(private MovieReview $movieReview){}
 
-    public function getAllReviews(): LengthAwarePaginator
+    public function paginateByUser(User $user): LengthAwarePaginator
     {
         return $this->movieReview->query()
-            ->with([
-                'movie:id,title,poster_url,release_date,slug',
-                'movie.genres:id,name,slug'
-            ])
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
-    }
-
-    public function getAllReviewsByMovie(int $movieId): LengthAwarePaginator
-    {
-        return $this->movieReview->query()
-            ->where('movie_id', $movieId)
+            ->with(self::LIST_RELATIONS)
+            ->where('user_id', $user->id)
             ->orderBy('id', 'desc')
             ->paginate(10);
     }
 
-    public function getOneAuthReviews(int $movieId): Collection
+    public function getAllByMovie(int $movieId): Collection
     {
         return $this->movieReview->query()
-            ->with(self::RELATIONS)
+            ->with(self::LIST_RELATIONS)
             ->where('movie_id', $movieId)
             ->get();
     }
@@ -54,18 +47,23 @@ class MovieReviewRepository
         );
     }
 
-    public function delete(int $userId, int $id): bool
+    public function delete(int $userId, int $reviewId): bool
     {
-        return $this->movieReview->query()
+        return (bool) $this->movieReview->query()
             ->where('user_id', $userId)
-            ->findOrFail($id)
+            ->findOrFail($reviewId)
             ->delete();
     }
 
-    public function existsReview(?int $userId, int $movieId): bool
+    public function existsByUserAndMovie(?User $user, int $movieId): bool
     {
+        if ($user === null)
+        {
+            return false;
+        }
+
         return $this->movieReview->query()
-            ->where('user_id', $userId)
+            ->where('user_id', $user->id)
             ->where('movie_id', $movieId)
             ->exists();
     }

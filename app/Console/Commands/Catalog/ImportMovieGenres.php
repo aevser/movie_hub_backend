@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands\Catalog;
 
-use App\Services\Catalog\Genre\ImportGenreService;
+use App\Services\Catalog\Genre\ImportMovieGenreService;
 use Illuminate\Console\Command;
 
-class ImportGenres extends Command
+class ImportMovieGenres extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:import-genres';
+    protected $signature = 'app:import-movie-genres';
 
     /**
      * The console command description.
@@ -24,7 +24,7 @@ class ImportGenres extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ImportGenreService $importGenreService): int
+    public function handle(ImportMovieGenreService $importGenreService): int
     {
         try
         {
