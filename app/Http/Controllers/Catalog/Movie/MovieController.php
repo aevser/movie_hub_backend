@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Catalog\Movie;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\Movie\FilterMovieRequest;
+use App\Http\Requests\Catalog\Movie\SearchMovieRequest;
 use App\Http\Requests\Catalog\Movie\SortMovieRequest;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
@@ -26,7 +27,7 @@ class MovieController extends Controller
         private MovieReviewRepository $movieReviewRepository
     ){}
 
-    public function index(Genre $genre, SortMovieRequest $request): View
+    public function index(Genre $genre, SortMovieRequest $sortMovieRequest, SearchMovieRequest $searchMovieRequest): View
     {
         return view('catalog.movie.index',
             [
@@ -35,7 +36,14 @@ class MovieController extends Controller
                 (
                     genre: $genre,
                     filters: [],
-                    sort: $request->validated('sort')
+                    sort: $sortMovieRequest->validated
+                    (
+                        'sort'
+                    ),
+                    search: $searchMovieRequest->validated
+                    (
+                        'search'
+                    )
                 )
             ]
         );
@@ -79,17 +87,22 @@ class MovieController extends Controller
         );
     }
 
-    public function filter(FilterMovieRequest $request): View
+    public function filter(FilterMovieRequest $filterMovieRequest, SortMovieRequest $sortMovieRequest, SearchMovieRequest $searchMovieRequest): View
     {
-        $filters = $request->validated();
-
         return view('catalog.movie.filter.index',
             [
                 'genres' => $this->movieGenreRepository->collection(),
                 'movies' => $this->movieRepository->paginate
                 (
-                    filters: $filters,
-                    sort: null
+                    filters: $filterMovieRequest->validated(),
+                    sort: $sortMovieRequest->validated
+                    (
+                        'sort'
+                    ),
+                    search: $searchMovieRequest->validated
+                    (
+                        'search'
+                    )
                 ),
                 'actors' => $this->movieCrewRepository->collection(),
                 'directors' => $this->movieCrewRepository->collection()

@@ -23,18 +23,14 @@ class MovieRepository
 
     public function __construct(private Movie $movie){}
 
-    public function paginate(array $filters, ?string $sort): LengthAwarePaginator
+    public function paginate(array $filters, ?string $sort, ?string $search): LengthAwarePaginator
     {
-        $query = $this->movie->query()
+        return $this->movie->query()
             ->with(self::LIST_RELATIONS)
-            ->applyFilters($filters);
-
-        if ($sort)
-        {
-            $query->applySort($sort);
-        }
-
-        return $query->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+            ->applyFilters($filters)
+            ->applySearch($search)
+            ->applySort($sort)
+            ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
     }
 
     public function collection(): Collection
@@ -44,17 +40,14 @@ class MovieRepository
             ->get();
     }
 
-    public function paginateByGenre(Genre $genre, array $filters, ?string $sort): LengthAwarePaginator
+    public function paginateByGenre(Genre $genre, array $filters, ?string $sort, ?string $search): LengthAwarePaginator
     {
-        $query = $genre->movies()
-            ->with(self::LIST_RELATIONS);
-
-        if ($sort)
-        {
-            $query->applySort($sort);
-        }
-
-        return $query->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+        return $genre->movies()
+            ->with(self::LIST_RELATIONS)
+            ->applyFilters($filters)
+            ->applySearch($search)
+            ->applySort($sort)
+            ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
     }
 
     public function chunkById(int $size, callable $callback): void

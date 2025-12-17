@@ -23,35 +23,68 @@
             </nav>
         </div>
 
-        <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex gap-3 mb-3">
+            <div class="flex-grow-1">
+                <form method="GET">
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+
+                    <div class="d-flex gap-2">
+                        <div class="input-group flex-grow-1">
+                            <input type="text"
+                                   class="form-control"
+                                   name="search"
+                                   placeholder="Поиск по названию..."
+                                   value="{{ request('search') }}">
+                            <button class="btn btn-primary" type="submit" style="min-width: 90px;">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                        </div>
+                        @if(request('search'))
+                            <a
+                                href="?{{ http_build_query(request()->except('search')) }}"
+                                class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+                                title="Очистить поиск"
+                            >
+                                <i class="bi bi-x"></i>
+                                <span>Очистить</span>
+                            </a>
+                        @endif
+
+                    </div>
+                </form>
+            </div>
+
             <div class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                        id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="min-width: 140px;">
                     <i class="bi bi-sort-down"></i> Сортировка
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
                     <li>
                         <a class="dropdown-item {{ request('sort') === 'release_date_desc' || !request('sort') ? 'active' : '' }}"
-                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'release_date_desc'])) }}">
+                           href="?{{ http_build_query(array_merge(request()->except('sort'), ['sort' => 'release_date_desc'])) }}">
                             Дата выпуска (новые)
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item {{ request('sort') === 'release_date_asc' ? 'active' : '' }}"
-                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'release_date_asc'])) }}">
+                           href="?{{ http_build_query(array_merge(request()->except('sort'), ['sort' => 'release_date_asc'])) }}">
                             Дата выпуска (старые)
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item {{ request('sort') === 'rating_desc' ? 'active' : '' }}"
-                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'rating_desc'])) }}">
+                           href="?{{ http_build_query(array_merge(request()->except('sort'), ['sort' => 'rating_desc'])) }}">
                             Рейтинг (высокий)
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item {{ request('sort') === 'rating_asc' ? 'active' : '' }}"
-                           href="{{ route('catalog.genres.movies.index', array_merge(request()->query(), ['genre' => $genre, 'sort' => 'rating_asc'])) }}">
+                           href="?{{ http_build_query(array_merge(request()->except('sort'), ['sort' => 'rating_asc'])) }}">
                             Рейтинг (низкий)
                         </a>
                     </li>
@@ -106,7 +139,11 @@
                 </div>
             @empty
                 <div class="alert alert-secondary text-center mb-0">
-                    Фильмы в этом жанре пока отсутствуют
+                    @if(request('search'))
+                        По запросу "<strong>{{ request('search') }}</strong>" ничего не найдено
+                    @else
+                        Фильмы в этом жанре пока отсутствуют
+                    @endif
                 </div>
             @endforelse
         </div>
