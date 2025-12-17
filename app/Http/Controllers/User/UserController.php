@@ -14,9 +14,11 @@ class UserController extends Controller
 
     public function show(): View
     {
-        $favorites = $this->userRepository->paginate(user: auth()->user());
-
-        return view('user.favorite.show', compact('favorites'));
+        return view('user.favorite.show',
+            [
+                'favorites' => $this->userRepository->paginate(user: auth()->user())
+            ]
+        );
     }
 
     public function addFavorite(Movie $movie): RedirectResponse

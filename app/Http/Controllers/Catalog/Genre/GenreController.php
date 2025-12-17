@@ -23,9 +23,12 @@ class GenreController extends Controller
 
         return view('catalog.genre.index',
             [
-                'genres' => $this->genreRepository->paginate(filters: $filters),
-                'actors' => $this->movieActorRepository->paginate(filters: $filters),
-                'directors' => $this->movieCrewRepository->paginate(filters: $filters)
+                'genres' => $this->genreRepository->paginate
+                (
+                    filters: $filters
+                ),
+                'actors' => $this->movieActorRepository->collection(),
+                'directors' => $this->movieCrewRepository->collection()
             ]
         );
     }

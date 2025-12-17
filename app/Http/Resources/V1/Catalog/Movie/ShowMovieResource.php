@@ -22,6 +22,7 @@ class ShowMovieResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'slug' => $this->slug,
             'description' => $this->description,
             'poster_url' => $this->poster_url,
             'release_date' => $this->release_date,

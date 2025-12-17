@@ -19,9 +19,9 @@ class ImportMovieActorService
     {
         $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
 
-        $casts = $credits['cast'];
+        $casts = array_slice($credits['cast'], 0, 5);
 
-        $attach = [];
+        $ids = [];
 
         if (empty($casts))
         {
@@ -43,14 +43,14 @@ class ImportMovieActorService
                 ]
             );
 
-            $attach[$actor->id] =
+            $ids[$actor->id] =
                 [
                     'character' => $cast['character']
                 ];
         }
 
-        $this->movieRepository->attachActors(movie: $movie, attach: $attach);
+        $this->movieRepository->attachActors(movie: $movie, ids: $ids);
 
-        return count($attach);
+        return count($ids);
     }
 }

@@ -16,15 +16,25 @@ class MovieController extends Controller
 
     public function index(IndexMovieRequest $request): JsonResponse
     {
-        $movies = $this->movieRepository->getAllPagination(filters: $request->validated());
+        $movies = $this->movieRepository->paginate(filters: $request->validated());
 
-        return response()->json(['data' => IndexMovieResource::collection($movies), 'code' => JsonResponse::HTTP_OK]);
+        return response()->json(
+            [
+                'data' => IndexMovieResource::collection($movies),
+                'code' => JsonResponse::HTTP_OK
+            ]
+        );
     }
 
     public function show(Movie $movie): JsonResponse
     {
-        $movie = $this->movieRepository->findById(id: $movie->id);
+        $movie = $this->movieRepository->find(id: $movie->id);
 
-        return response()->json(['data' => ShowMovieResource::make($movie), 'code' => JsonResponse::HTTP_OK]);
+        return response()->json(
+            [
+                'data' => ShowMovieResource::make($movie),
+                'code' => JsonResponse::HTTP_OK
+            ]
+        );
     }
 }

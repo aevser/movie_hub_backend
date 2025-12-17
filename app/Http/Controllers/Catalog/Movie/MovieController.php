@@ -27,7 +27,8 @@ class MovieController extends Controller
         return view('catalog.movie.index',
             [
                 'genre' => $genre,
-                'movies' => $this->movieRepository->paginateByGenre(
+                'movies' => $this->movieRepository->paginateByGenre
+                (
                     genre: $genre,
                     filters: []
                 )
@@ -42,19 +43,30 @@ class MovieController extends Controller
         return view('catalog.movie.show',
             [
                 'genre' => $genre,
-                'movie' => $this->movieRepository->findByGenre(
+                'movie' => $this->movieRepository->findByGenre
+                (
                     genre: $genre,
                     movieId: $movie->id
                 ),
-
-                'director' => $this->movieCrewRepository->findDirectorByMovie($movie),
-                'images' => $this->movieImageRepository->getByMovie($movie->id),
-                'reviews' => $this->movieReviewRepository->getAllByMovie($movie->id),
-                'isFavorite' => $this->userRepository->existsFavoriteMovie(
+                'director' => $this->movieCrewRepository->findDirectorByMovie
+                (
+                    movieId: $movie->id
+                ),
+                'images' => $this->movieImageRepository->getByMovie
+                (
+                    movieId: $movie->id
+                ),
+                'reviews' => $this->movieReviewRepository->getAllByMovie
+                (
+                    movieId: $movie->id
+                ),
+                'isFavorite' => $this->userRepository->existsFavoriteMovie
+                (
                     user: $user,
                     movie: $movie
                 ),
-                'userReviewExists' => $this->movieReviewRepository->existsByUserAndMovie(
+                'userReviewExists' => $this->movieReviewRepository->existsByUserAndMovie
+                (
                     user: $user,
                     movieId: $movie->id
                 )

@@ -9,6 +9,8 @@ use App\Services\Catalog\MovieClientService;
 
 class ImportMovieCrewService
 {
+    private const string JOB = 'Director';
+
     public function __construct(
         private MovieClientService $movieClientService,
         private MovieRepository $movieRepository,
@@ -21,7 +23,7 @@ class ImportMovieCrewService
 
         $crews = $credits['crew'];
 
-        $attach = [];
+        $ids = [];
 
         if (empty($crews))
         {
@@ -30,28 +32,31 @@ class ImportMovieCrewService
 
         foreach ($crews as $crew)
         {
-            $crew = $this->movieCrewRepository->updateOrCreate
-            (
-                movieDbId: $movie['id'],
-                data:
-                [
-                    'name' => $crew['name'],
-                    'image_url' =>
-                        $crew['profile_path']
-                            ? 'https://image.tmdb.org/t/p/w500' . $crew['profile_path']
-                            : null
-                ]
-            );
+            if ($crew['job'] === self::JOB)
+            {
+                $crew = $this->movieCrewRepository->updateOrCreate
+                (
+                    movieDbId: $crew['id'],
+                    data:
+                    [
+                        'name' => $crew['name'],
+                        'image_url' =>
+                            $crew['profile_path']
+                                ? 'https://image.tmdb.org/t/p/w500' . $crew['profile_path']
+                                : null
+                    ]
+                );
 
-            $attach[$crew->id] =
-                [
-                    'job' => $crew['job'],
-                    'department' => $crew['department']
-                ];
+                $ids[$crew->id] =
+                    [
+                        'job' => $crew['job'],
+                        'department' => $crew['department']
+                    ];
+            }
         }
 
-        $this->movieRepository->attachCrews(movie: $movie, attach: $attach);
+        $this->movieRepository->attachCrews(movie: $movie, ids: $ids);
 
-        return count($attach);
+        return count($ids);
     }
 }

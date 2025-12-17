@@ -18,7 +18,7 @@ class ImportMovieService
 
     public function import(Genre $genre, int $limit): int
     {
-        $attach = [];
+        $ids = [];
 
         $page = 1;
 
@@ -55,7 +55,7 @@ class ImportMovieService
                     ]
                 );
 
-                $attach[$item->id] = [];
+                $ids[$item->id] = [];
 
                 $imported++;
             }
@@ -64,7 +64,7 @@ class ImportMovieService
 
         } while ($imported < $limit);
 
-        $this->genreRepository->attachMovies(genre: $genre, attach: $attach);
+        $this->genreRepository->attachMovies(genre: $genre, ids: $ids);
 
         return $imported;
     }

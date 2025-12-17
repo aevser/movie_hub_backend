@@ -5,7 +5,7 @@ namespace App\Repositories\Catalog\Crew;
 use App\Constants\Pagination;
 use App\Models\Catalog\Crew\Crew;
 use App\Models\Catalog\Movie\Movie;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class MovieCrewRepository
 {
@@ -13,18 +13,18 @@ class MovieCrewRepository
 
     public function __construct(private Crew $crew){}
 
-    public function paginate(array $filters): LengthAwarePaginator
+    public function collection(): Collection
     {
         return $this->crew->query()
             ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
-            ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+            ->get();
     }
 
-    public function findDirectorByMovie(Movie $movie): ?Crew
+    public function findDirectorByMovie(int $movieId): ?Crew
     {
         return $this->crew->query()
-            ->whereHas('movies', function ($query) use ($movie) {
-                $query->where('movies.id', $movie->id)
+            ->whereHas('movies', function ($query) use ($movieId) {
+                $query->where('movies.id', $movieId)
                     ->where('crew_movie.job', self::DIRECTOR_JOB);
             })
             ->first();
