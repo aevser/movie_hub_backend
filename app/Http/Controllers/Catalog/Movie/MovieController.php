@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Catalog\Movie;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Catalog\Movie\FilterMovieRequest;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
 use App\Repositories\Catalog\Crew\MovieCrewRepository;
+use App\Repositories\Catalog\Genre\MovieGenreRepository;
 use App\Repositories\Catalog\Movie\Image\MovieImageRepository;
 use App\Repositories\Catalog\Movie\MovieRepository;
 use App\Repositories\User\Movie\Review\MovieReviewRepository;
@@ -16,6 +18,7 @@ class MovieController extends Controller
 {
     public function __construct(
         private UserRepository $userRepository,
+        private MovieGenreRepository $movieGenreRepository,
         private MovieRepository $movieRepository,
         private MovieCrewRepository $movieCrewRepository,
         private MovieImageRepository $movieImageRepository,
@@ -70,6 +73,23 @@ class MovieController extends Controller
                     user: $user,
                     movieId: $movie->id
                 )
+            ]
+        );
+    }
+
+    public function filter(FilterMovieRequest $request): View
+    {
+        $filters = $request->validated();
+
+        return view('catalog.movie.filter.index',
+            [
+                'genres' => $this->movieGenreRepository->collection(),
+                'movies' => $this->movieRepository->paginate
+                (
+                    filters: $filters
+                ),
+                'actors' => $this->movieCrewRepository->collection(),
+                'directors' => $this->movieCrewRepository->collection()
             ]
         );
     }

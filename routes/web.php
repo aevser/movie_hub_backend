@@ -12,6 +12,10 @@ Route::prefix('catalog')
             'index'
         ])->name('genres.index');
 
+        Route::get('movies/filter', [
+            Controllers\Catalog\Movie\MovieController::class, 'filter'
+        ])->name('movies.filter');
+
         Route::prefix('{genre}')
             ->group(function () {
 

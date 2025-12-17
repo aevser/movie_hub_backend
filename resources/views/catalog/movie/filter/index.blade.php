@@ -1,11 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Жанры')
+@section('title', 'Фильмы')
 
 @section('content')
 
     <div class="page-header mb-4">
-        <h2 class="fw-bold mb-1">Жанры</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('catalog.genres.index') }}">Жанры</a></li>
+                <li class="breadcrumb-item active">Результаты поиска</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">Найдено фильмов: {{ $movies->total() }}</h2>
     </div>
 
     <div class="row">
@@ -130,6 +136,7 @@
                                 </div>
                             </div>
 
+
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed fw-semibold"
@@ -174,22 +181,61 @@
 
 
         <div class="col-lg-9 col-md-8">
-            <div class="genre-list d-flex flex-column gap-3">
-                @forelse ($genres as $genre)
-                    <a href="{{ route('catalog.genres.movies.index', $genre) }}" class="genre-row">
-                        <span class="genre-title">{{ $genre->name }}</span>
-                        <span class="genre-arrow">→</span>
-                    </a>
+            <div class="movie-list d-flex flex-column gap-3">
+                @forelse($movies as $movie)
+                    <div class="movie-row d-flex">
+
+                        <div class="movie-row-poster">
+                            <img src="{{ $movie->poster_url }}"
+                                 alt="{{ $movie->title }}"
+                                 loading="lazy">
+                        </div>
+
+                        <div class="movie-row-content d-flex flex-column">
+                            <h5 class="movie-row-title mb-1">
+                                {{ $movie->title }}
+                            </h5>
+
+                            <div class="movie-row-meta mb-2">
+                                @if($movie->release_date)
+                                    <span>Год выпуска: {{ \Carbon\Carbon::parse($movie->release_date)->year }}</span>
+                                @endif
+
+                                @if($movie->genres->count())
+                                    <span class="dot">•</span>
+                                    <span class="genre-label">Жанр:</span>
+
+                                    @foreach($movie->genres as $item)
+                                        <span class="genre-name">
+                                    {{ $item->name }}@if(!$loop->last),@endif
+                                </span>
+                                    @endforeach
+                                @endif
+                            </div>
+
+                            <p class="movie-row-description mb-3">
+                                {{ $movie->description }}
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="{{ route('catalog.genres.movies.show', [$genre, $movie]) }}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    Подробнее
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
                 @empty
                     <div class="alert alert-secondary text-center mb-0">
-                        Жанры не найдены
+                        По заданым параметрам фильмы отсутсвуют
                     </div>
                 @endforelse
             </div>
 
-            @if($genres->hasPages())
+            @if($movies->hasPages())
                 <div class="d-flex justify-content-end mt-4">
-                    {{ $genres->appends(request()->query())->links('components.pagination.pagination') }}
+                    {{ $movies->appends(request()->query())->links('components.pagination.pagination') }}
                 </div>
             @endif
         </div>

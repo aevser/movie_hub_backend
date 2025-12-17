@@ -5,6 +5,7 @@ namespace App\Repositories\Catalog\Genre;
 use App\Constants\Pagination;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieGenreRepository
@@ -22,6 +23,13 @@ class MovieGenreRepository
             ->with(self::RELATIONS)
             ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
             ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+    }
+
+    public function collection(): Collection
+    {
+        return $this->genre->query()
+            ->with(self::RELATIONS)
+            ->get();
     }
 
     public function chunkById(int $size, callable $callback): void

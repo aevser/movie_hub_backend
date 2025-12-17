@@ -22,6 +22,6 @@ class LoginController extends Controller
                 ->onlyInput('email');
         }
 
-        return redirect()->route('genres.index');
+        return redirect()->route('catalog.genres.index');
     }
 }

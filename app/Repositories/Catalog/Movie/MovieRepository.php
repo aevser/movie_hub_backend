@@ -5,6 +5,7 @@ namespace App\Repositories\Catalog\Movie;
 use App\Constants\Pagination;
 use App\Models\Catalog\Genre\Genre;
 use App\Models\Catalog\Movie\Movie;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository
@@ -25,9 +26,17 @@ class MovieRepository
     public function paginate(array $filters): LengthAwarePaginator
     {
         return $this->movie->query()
+            ->applyFilters($filters)
             ->with(self::LIST_RELATIONS)
             ->orderBy(Pagination::COLUMN_ID, Pagination::SORT_DESC)
             ->paginate($filters['perPage'] ?? Pagination::PER_PAGE);
+    }
+
+    public function collection(): Collection
+    {
+        return $this->movie->query()
+            ->with(self::LIST_RELATIONS)
+            ->get();
     }
 
     public function paginateByGenre(Genre $genre, array $filters): LengthAwarePaginator

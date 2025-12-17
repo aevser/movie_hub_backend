@@ -34,7 +34,7 @@ class ImportMovieCrewService
         {
             if ($crew['job'] === self::JOB)
             {
-                $crew = $this->movieCrewRepository->updateOrCreate
+                $director = $this->movieCrewRepository->updateOrCreate
                 (
                     movieDbId: $crew['id'],
                     data:
@@ -47,7 +47,7 @@ class ImportMovieCrewService
                     ]
                 );
 
-                $ids[$crew->id] =
+                $ids[$director->id] =
                     [
                         'job' => $crew['job'],
                         'department' => $crew['department']
