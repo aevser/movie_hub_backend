@@ -21,6 +21,6 @@ class RegistrationController extends Controller
     {
         $this->userRepository->create(data: $request->validated());
 
-        return redirect()->route('genres.index');
+        return redirect()->route('login.show');
     }
 }

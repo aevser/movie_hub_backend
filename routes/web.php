@@ -24,9 +24,19 @@ Route::get('login', [Controllers\User\Auth\LoginController::class, 'show'])->nam
 Route::post('login', [Controllers\User\Auth\LoginController::class, 'login'])->name('login');
 
 Route::middleware('auth')->group(function () {
+    Route::get('reviews', [Controllers\User\Review\ReviewController::class, 'show'])->name('reviews.index');
+
+    Route::delete('reviews/{id}', [Controllers\User\Review\ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::get('favorites', [Controllers\User\UserController::class, 'show'])->name('favorites.index');
+
     Route::post('{genre}/{movie}/reviews', [Controllers\User\Review\ReviewController::class, 'store'])->name('reviews.store');
 
     Route::delete('{genre}/{movie}/reviews/{id}', [Controllers\User\Review\ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::post('favorites/{movie}', [Controllers\User\UserController::class, 'addFavorite'])->name('favorites.store');
+
+    Route::delete('favorites/{movie}', [Controllers\User\UserController::class, 'removeFavorite'])->name('favorites.destroy');
 
     Route::post('logout', [Controllers\User\Auth\LogoutController::class, 'logout'])->name('logout');
 });

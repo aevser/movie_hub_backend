@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('user_favorite', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('move_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('movie_id')->constrained()->cascadeOnDelete();
 
-            $table->unique(['user_id', 'move_id']);
+            $table->unique(['user_id', 'movie_id']);
         });
     }
 

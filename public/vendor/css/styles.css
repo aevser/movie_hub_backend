@@ -40,6 +40,55 @@ body {
     width: 100%;
 }
 
+.gallery-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.gallery-card {
+    flex: 0 0 auto;
+    width: 220px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    padding: 8px;
+}
+.favorite-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: auto;
+    transition: all 0.3s ease;
+    color: #cbd5e1;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+}
+
+.favorite-btn.active {
+    color: #ef4444;
+}
+
+.favorite-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+
 /* MOVIE LAYOUT */
 .movie-show {
     display: grid;

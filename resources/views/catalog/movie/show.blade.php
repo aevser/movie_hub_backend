@@ -1,18 +1,38 @@
 @extends('layouts.app')
 
-@section(
-    'title',
-    $movie->title . ' : ' . \Carbon\Carbon::parse($movie->release_date)->year
-)
+@section('title', $movie->title . ' : ' . \Carbon\Carbon::parse($movie->release_date)->year)
 
 @section('content')
     <div class="catalog-wrapper">
 
-        {{-- HEADER --}}
         <div class="page-header mb-4">
             <div class="movie-title-row mb-2">
                 <a href="{{ route('genres.movies.index', $genre) }}" class="back-link">←</a>
                 <h1 class="movie-title">{{ $movie->title }}</h1>
+
+                @auth
+                    @if($isFavorite)
+                        <form method="POST" action="{{ route('favorites.destroy', ['movie' => $movie]) }}" style="margin: 0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="favorite-btn active" title="Удалить из избранного">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    @else
+                        {{-- Добавить в избранное (серое сердце) --}}
+                        <form method="POST" action="{{ route('favorites.store', ['movie' => $movie]) }}" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="favorite-btn" title="Добавить в избранное">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    @endif
+                @endauth
             </div>
 
             <nav aria-label="breadcrumb">
@@ -35,7 +55,7 @@
         {{-- MOVIE --}}
         <div class="movie-show">
 
-            {{-- LEFT COLUMN --}}
+            {{-- LEFT --}}
             <div class="movie-show-left">
                 <div class="movie-show-poster">
                     <img
@@ -62,7 +82,6 @@
                 </div>
             </div>
 
-            {{-- RIGHT COLUMN --}}
             <div class="movie-show-content">
 
                 <div class="movie-info-scroll">
@@ -95,7 +114,7 @@
                 </div>
 
                 @if($movie->actors->count())
-                    <div class="movie-actors">
+                    <div class="movie-actors mt-4">
                         <div class="section-title">В ролях</div>
 
                         <div class="actors-scroll">
@@ -128,21 +147,36 @@
             </div>
         </div>
 
-        {{-- REVIEWS --}}
+        @if($images->count())
+            <div class="movie-gallery mt-5">
+
+                <h2 class="fw-bold mb-4">Постеры</h2>
+
+                <div class="gallery-scroll">
+                    @foreach($images as $image)
+                        <div class="gallery-card">
+                            <img
+                                src="{{ $image->image_url }}"
+                                alt="{{ $movie->title }}"
+                            >
+                        </div>
+                    @endforeach
+                </div>
+
+            </div>
+        @endif
+
         <div class="reviews-section mt-5">
 
             <h2 class="fw-bold mb-4">Отзывы</h2>
 
-            {{-- LIST --}}
             @if($reviews->count())
                 <div class="d-flex flex-column gap-3 mb-4">
                     @foreach($reviews as $review)
                         <div class="card shadow-sm border-0">
                             <div class="card-body">
 
-                                <div
-                                    class="d-flex justify-content-between align-items-start mb-2"
-                                >
+                                <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div class="fw-semibold">
                                         {{ $review->user->name ?? 'Гость' }}
                                     </div>
@@ -192,7 +226,6 @@
                 </div>
             @endif
 
-            {{-- INFO / FORM --}}
             @guest
                 <div class="alert alert-light text-center small mb-3">
                     Для публикации отзыва потребуется авторизация

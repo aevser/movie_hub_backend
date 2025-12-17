@@ -4,19 +4,24 @@ namespace App\Repositories\User\Movie\Review;
 
 use App\Models\User\MovieReview;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieReviewRepository
 {
-    private const string RELATIONS = 'movie:id,title,poster_url,release_date';
+    private const array RELATIONS = ['movie:id,title,slug,poster_url,release_date, movie.genres'];
 
     public function __construct(private MovieReview $movieReview){}
 
-    public function getAllReviews(int $movieId): Collection
+    public function getAllReviews(): LengthAwarePaginator
     {
         return $this->movieReview->query()
-            ->with(self::RELATIONS)
-            ->where('movie_id', $movieId)
-            ->get();
+            ->with([
+                'movie:id,title,poster_url,release_date,slug',
+                'movie.genres:id,name,slug'
+            ])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
     }
 
     public function getOneAuthReviews(int $movieId): Collection
@@ -40,11 +45,10 @@ class MovieReviewRepository
         );
     }
 
-    public function delete(int $userId, int $movieId, int $id): bool
+    public function delete(int $userId, int $id): bool
     {
         return $this->movieReview->query()
             ->where('user_id', $userId)
-            ->where('movie_id', $movieId)
             ->findOrFail($id)
             ->delete();
     }
