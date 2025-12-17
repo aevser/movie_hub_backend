@@ -15,7 +15,10 @@ class ImportMovieImageService
 
     public function import(Movie $movie): int
     {
-        $images = $this->movieClientService->images(movieId: $movie->movie_db_id);
+        $images = $this->movieClientService->images
+        (
+            movieId: $movie->movie_db_id
+        );
 
         $posters = $images['posters'];
 

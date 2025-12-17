@@ -22,7 +22,14 @@ class ActorController extends Controller
         return response()->json(
             [
                 'data' => IndexMovieActorResource::collection($actors),
-                'code' => JsonResponse::HTTP_OK
+                'code' => JsonResponse::HTTP_OK,
+                'pagination' =>
+                    [
+                        'total' => $actors->total(),
+                        'per_page' => $actors->perPage(),
+                        'current_page' => $actors->currentPage(),
+                        'last_page' => $actors->lastPage()
+                    ]
             ]
         );
     }

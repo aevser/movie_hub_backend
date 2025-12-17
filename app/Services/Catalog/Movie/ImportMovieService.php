@@ -26,7 +26,11 @@ class ImportMovieService
 
         do
         {
-            $movies = $this->movieClientService->movies(genreMovieDbId: $genre->movie_db_id, page: $page);
+            $movies = $this->movieClientService->movies
+            (
+                genreMovieDbId: $genre->movie_db_id,
+                page: $page
+            );
 
             if (empty($movies))
             {

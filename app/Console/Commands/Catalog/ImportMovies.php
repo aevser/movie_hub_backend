@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class ImportMovies extends Command
 {
-    private const int CHUNK_SIZE = 30;
+    private const int CHUNK_SIZE = 100;
     private const int LIMIT = 7;
 
     /**

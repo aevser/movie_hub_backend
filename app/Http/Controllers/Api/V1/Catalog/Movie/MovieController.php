@@ -26,7 +26,14 @@ class MovieController extends Controller
         return response()->json(
             [
                 'data' => IndexMovieResource::collection($movies),
-                'code' => JsonResponse::HTTP_OK
+                'code' => JsonResponse::HTTP_OK,
+                'pagination' =>
+                    [
+                        'total' => $movies->total(),
+                        'per_page' => $movies->perPage(),
+                        'current_page' => $movies->currentPage(),
+                        'last_page' => $movies->lastPage()
+                    ]
             ]
         );
     }

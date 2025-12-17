@@ -17,7 +17,10 @@ class ImportMovieActorService
 
     public function import(Movie $movie): int
     {
-        $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
+        $credits = $this->movieClientService->credits
+        (
+            movieId: $movie->movie_db_id
+        );
 
         $casts = array_slice($credits['cast'], 0, 5);
 

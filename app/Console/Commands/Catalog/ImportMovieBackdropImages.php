@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class ImportMovieBackdropImages extends Command
 {
-    private const int CHUNK_SIZE = 200;
+    private const int CHUNK_SIZE = 100;
 
     /**
      * The name and signature of the console command.

@@ -22,7 +22,14 @@ class GenreController extends Controller
         return response()->json(
             [
                 'data' => IndexMovieGenreResource::collection($genres),
-                'code' => JsonResponse::HTTP_OK
+                'code' => JsonResponse::HTTP_OK,
+                'pagination' =>
+                    [
+                        'total' => $genres->total(),
+                        'per_page' => $genres->perPage(),
+                        'current_page' => $genres->currentPage(),
+                        'last_page' => $genres->lastPage()
+                    ]
             ]
         );
     }

@@ -19,7 +19,10 @@ class ImportMovieCrewService
 
     public function import(Movie $movie): int
     {
-        $credits = $this->movieClientService->credits(movieId: $movie->movie_db_id);
+        $credits = $this->movieClientService->credits
+        (
+            movieId: $movie->movie_db_id
+        );
 
         $crews = $credits['crew'];
 
