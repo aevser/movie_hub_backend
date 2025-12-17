@@ -4,7 +4,6 @@ namespace App\Repositories\Catalog\Genre;
 
 use App\Constants\Pagination;
 use App\Models\Catalog\Genre\Genre;
-use App\Models\Catalog\Movie\Movie;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 

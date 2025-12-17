@@ -19,13 +19,11 @@ class GenreController extends Controller
 
     public function index(IndexMovieGenreRequest $request): View
     {
-        $filters = $request->validated();
-
         return view('catalog.genre.index',
             [
                 'genres' => $this->genreRepository->paginate
                 (
-                    filters: $filters
+                    filters: $request->validated()
                 ),
                 'actors' => $this->movieActorRepository->collection(),
                 'directors' => $this->movieCrewRepository->collection()

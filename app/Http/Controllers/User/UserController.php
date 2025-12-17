@@ -16,21 +16,32 @@ class UserController extends Controller
     {
         return view('user.favorite.show',
             [
-                'favorites' => $this->userRepository->paginate(user: auth()->user())
+                'favorites' => $this->userRepository->paginate
+                (
+                    user: auth()->user()
+                )
             ]
         );
     }
 
     public function addFavorite(Movie $movie): RedirectResponse
     {
-        $this->userRepository->attachFavoriteMovie(user: auth()->user(), movie: $movie);
+        $this->userRepository->attachFavoriteMovie
+        (
+            user: auth()->user(),
+            movie: $movie
+        );
 
         return redirect()->back();
     }
 
     public function removeFavorite(Movie $movie): RedirectResponse
     {
-        $this->userRepository->detachFavoriteMovie(user: auth()->user(), movie: $movie);
+        $this->userRepository->detachFavoriteMovie
+        (
+            user: auth()->user(),
+            movie: $movie
+        );
 
         return redirect()->back();
     }

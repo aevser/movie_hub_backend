@@ -16,7 +16,12 @@ class MovieController extends Controller
 
     public function index(IndexMovieRequest $request): JsonResponse
     {
-        $movies = $this->movieRepository->paginate(filters: $request->validated());
+        $movies = $this->movieRepository->paginate
+        (
+            filters: $request->validated(),
+            sort: null,
+            search: null
+        );
 
         return response()->json(
             [
@@ -28,7 +33,10 @@ class MovieController extends Controller
 
     public function show(Movie $movie): JsonResponse
     {
-        $movie = $this->movieRepository->find(id: $movie->id);
+        $movie = $this->movieRepository->find
+        (
+            id: $movie->id
+        );
 
         return response()->json(
             [

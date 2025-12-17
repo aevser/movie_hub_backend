@@ -14,7 +14,10 @@ class GenreController extends Controller
 
     public function index(IndexMovieGenreRequest $request): JsonResponse
     {
-        $genres = $this->genreRepository->paginate(filters: $request->validated());
+        $genres = $this->genreRepository->paginate
+        (
+            filters: $request->validated()
+        );
 
         return response()->json(
             [

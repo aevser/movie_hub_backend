@@ -4,7 +4,6 @@ namespace App\Repositories\Catalog\Crew;
 
 use App\Constants\Pagination;
 use App\Models\Catalog\Crew\Crew;
-use App\Models\Catalog\Movie\Movie;
 use Illuminate\Database\Eloquent\Collection;
 
 class MovieCrewRepository

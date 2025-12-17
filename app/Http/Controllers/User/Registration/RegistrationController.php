@@ -20,7 +20,10 @@ class RegistrationController extends Controller
 
     public function store(CreateUserRequest $request): RedirectResponse
     {
-        $user = $this->userRepository->create(data: $request->validated());
+        $user = $this->userRepository->create
+        (
+            data: $request->validated()
+        );
 
         Auth::login(user: $user);
 

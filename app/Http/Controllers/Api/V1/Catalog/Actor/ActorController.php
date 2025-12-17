@@ -14,7 +14,10 @@ class ActorController extends Controller
 
     public function index(IndexMovieActorRequest $request): JsonResponse
     {
-        $actors = $this->movieActorRepository->paginate(filters: $request->validated());
+        $actors = $this->movieActorRepository->paginate
+        (
+            filters: $request->validated()
+        );
 
         return response()->json(
             [
