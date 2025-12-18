@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 
+Route::redirect('/', '/catalog');
+
 Route::prefix('catalog')
     ->name('catalog.')
     ->group(function () {
